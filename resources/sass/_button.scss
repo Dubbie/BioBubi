@@ -1,0 +1,19 @@
+.btn {
+  -webkit-border-radius: 25rem;
+  -moz-border-radius: 25rem;
+  border-radius: 25rem;
+  font-weight: 700;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.btn-outline-secondary {
+  color: #5b7095;
+  border-color: #5b7095;
+
+  &:hover,
+  &:active {
+    background-color: #5b7095;
+    border-color: #5b7095;
+  }
+}

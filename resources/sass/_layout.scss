@@ -1,0 +1,37 @@
+body {
+  background-color: #ffffff;
+  color: #162642;
+}
+
+.navbar.navbar-light {
+  border-bottom: 1px solid #dfe0eb;
+}
+
+.tr-clickable {
+  cursor: pointer;
+}
+
+.navbar {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.navbar-light .navbar-nav {
+  .nav-link {
+    color: #162642;
+    font-weight: 700;
+    padding: 1rem;
+    border-bottom: 3px solid transparent;
+    transition: border-bottom-color 250ms ease-in-out;
+
+    &:hover {
+      color: #162642;
+      border-bottom-color: transparentize(#2560ce, 0.75);
+    }
+
+    &.active {
+      color: #2560ce;
+      border-bottom: 3px solid #2560ce;
+    }
+  }
+}
