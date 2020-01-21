@@ -12,7 +12,7 @@
         {{-- Megrendelők --}}
         @if(count($customers) > 0)
             <table class="table table-sm table-hover">
-                <thead>
+                <thead class="thead-dark">
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Név</th>

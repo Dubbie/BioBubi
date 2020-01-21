@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="d-flex justify-content-between align-items-start">
-            <h1 class="font-weight-bold">Új termék hozzáadása</h1>
+            <h1 class="font-weight-bold mb-4">Új termék hozzáadása</h1>
             <div class="btn-toolbar">
                 <a href="{{ action('ItemsController@index') }}" class="btn btn-sm btn-link text-decoration-none">Vissza
                     a termékekhez</a>
@@ -22,7 +22,7 @@
                         <input type="text" id="name" name="name" class="form-control" required>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label for="price">Ár</label>
                         <div class="input-group mb-3">
@@ -41,6 +41,7 @@
                 </div>
             </div>
         </form>
+        <p class="lead">Az itt megadott adatokat fogod majd látni, ha rögzíteni szeretnél egy megvásárolt terméket a megrendelő felületen.</p>
     </div>
 @endsection
 

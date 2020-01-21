@@ -11,24 +11,31 @@
 
         {{-- Megrendelők --}}
         @if(count($items) > 0)
-            <table class="table table-sm table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Név</th>
-                        <th scope="col">Ár</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach($items as $item)
-                    <tr class="tr-clickable" data-redirect-to="{{ action('ItemsController@show', $item) }}">
-                        <td class="text-muted">{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->price }}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-md-8">
+                    <table class="table table-sm table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Név</th>
+                            <th scope="col">Ár</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($items as $item)
+                            <tr class="tr-clickable" data-redirect-to="{{ action('ItemsController@show', $item) }}">
+                                <td class="text-muted">{{ $item->id }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->price }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <p class="lead">Az itt szereplő termékek azok, amiket akkor látsz, ha új vásárlást rögzítesz egy felhasználóhoz.</p>
+                </div>
+            </div>
         @else
             <p class="lead mb-2">Ajjaj! Nincsen még termék az adatbázisban.</p>
             <p><a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-primary">Termék hozzáadása</a></p>
