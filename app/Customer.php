@@ -27,4 +27,8 @@ class Customer extends Model
     public function comments() {
         return $this->hasMany('App\Comment', 'customer_id');
     }
+
+    public function purchases() {
+        return $this->hasMany('App\CustomerItems', 'customer_id');
+    }
 }

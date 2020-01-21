@@ -14,12 +14,24 @@
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function() {
+    // Megrendelők kontrolleres
     Route::get('/', 'CustomersController@index');
-    Route::get('/megrendelo/uj', 'CustomersController@create');
-    Route::get('/megrendelo/{id}', 'CustomersController@show');
-    Route::post('/megrendelo', 'CustomersController@store');
+    Route::get('/megrendelok/uj', 'CustomersController@create');
+    Route::get('/megrendelok/{id}', 'CustomersController@show');
+    Route::post('/megrendelok', 'CustomersController@store');
 
+    // Megjegyzések kontrolleres
     Route::post('/megjegyzesek/uj', 'CommentsController@store');
+
+    // Megrendelő termékei kontrolleres
+    Route::post('/termekek/megrendelo/', 'CustomerItemsController@store');
+    Route::post('/termekek/megrendelo/betoltes', 'CustomerItemsController@loadNew');
+
+    // Termék kontrolleres
+    Route::get('/termekek', 'ItemsController@index');
+    Route::get('/termekek/uj', 'ItemsController@create');
+    Route::get('/termekek/{id}', 'ItemsController@show');
+    Route::post('/termekek', 'ItemsController@store');
 
     Route::get('/home', 'HomeController@index')->name('home');
 });

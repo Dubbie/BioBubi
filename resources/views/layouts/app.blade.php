@@ -34,14 +34,14 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a href="{{ action('CustomersController@index') }}" class="nav-link {{ Request::is('megrendelo*') || Request::is('/') ? 'active' : '' }}">
+                            <a href="{{ action('CustomersController@index') }}" class="nav-link {{ Request::is('megrendelok*') || Request::is('/') ? 'active' : '' }}">
                                 <span class="icon mr-2">
                                     <i class="fas fa-users"></i>
                                 </span> Megrendelők
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#!" class="nav-link">
+                            <a href="{{ action('ItemsController@index') }}" class="nav-link {{ Request::is('termekek*') ? 'active' : '' }}">
                                 <span class="icon mr-2">
                                     <i class="fas fa-archive"></i>
                                 </span>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Address;
 use App\Customer;
+use App\Item;
 use Illuminate\Http\Request;
 
 class CustomersController extends Controller
@@ -82,9 +83,11 @@ class CustomersController extends Controller
      */
     public function show($id) {
         $customer = Customer::find($id);
+        $items = Item::all();
 
         return view('customers.show')->with([
             'customer' => $customer,
+            'items' => $items,
         ]);
     }
 }
