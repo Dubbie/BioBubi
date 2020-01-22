@@ -1,63 +1,66 @@
-@extends('layouts.app')
+@extends('layouts.fullscreen')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Bejelentkezés</div>
-
-                <div class="card-body">
+    <div class="container mt-5 pt-5">
+        <div class="row pt-5">
+            <div class="col-md-4 offset-md-4">
+                <div class="card card-body rounded-lg border-0 shadow">
+                    <h5 class="font-weight-bold text-uppercase mb-4">Belépés</h5>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Cím</label>
+                        <div class="form-group ">
+                            <label for="email" class="label-sm d-block d-md-none">E-Mail Cím</label>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                                   name="email" value="{{ old('email') }}" placeholder="Email" required
+                                   autocomplete="email" autofocus>
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                            @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                        <div class="form-group mb-1">
+                            <label for="password" class="label-sm d-block d-md-none">Jelszó</label>
+                            <input id="password" type="password"
+                                   class="form-control @error('password') is-invalid @enderror" name="password"
+                                   placeholder="Password" required autocomplete="current-password">
+
+                            @error('password')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" name="remember"
+                                       id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="remember"><small>Bejelentkezve maradok</small></label>
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">Jelszó</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">Bejelentkezve maradok</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">Belépés</button>
-                            </div>
+                        <div class="form-group text-center mb-0">
+                            <button type="submit" class="btn btn-sm btn-primary px-4">Belépés</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+@endsection
+
+@section('custom-scripts')
+    <script>
+        $('form').on('submit', (e) => {
+            e.stopPropagation();
+            const submitBtn = $(e.currentTarget).find('button[type=submit]');
+            submitBtn.prop('disabled', true);
+            submitBtn.addClass('disabled');
+            submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        });
+    </script>
 @endsection

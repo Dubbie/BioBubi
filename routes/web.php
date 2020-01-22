@@ -11,7 +11,10 @@
 |
 */
 
-Auth::routes();
+// Authentication Routes...
+Route::get('belepes', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('belepes', 'Auth\LoginController@login');
+Route::post('kijelentkezes', 'Auth\LoginController@logout')->name('logout');
 
 Route::group(['middleware' => 'auth'], function() {
     // Megrendelők kontrolleres

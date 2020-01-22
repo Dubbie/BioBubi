@@ -11393,6 +11393,11 @@ body {
   border-bottom: 3px solid #2560ce;
 }
 
+.body-fullscreen {
+  min-height: 100vh;
+  background: url("/storage/bg.jpg") #29004e no-repeat fixed;
+}
+
 .customer-chooser .customer-chooser-label {
   color: #000000;
 }
@@ -11445,6 +11450,8 @@ body {
   font-weight: 700;
   padding-left: 1rem;
   padding-right: 1rem;
+  -webkit-transition: all 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
 }
 
 .btn-outline-secondary {
@@ -11466,6 +11473,11 @@ body {
 
 .btn-muted:hover {
   color: rgba(22, 38, 66, 0.67);
+}
+
+.label-sm {
+  font-weight: 700;
+  font-size: 0.8rem;
 }
 
 .comment {
