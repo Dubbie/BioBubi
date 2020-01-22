@@ -54,25 +54,37 @@
                     </div>
                 </div>
                 <div class="col-lg-9">
-                    <table class="table table-sm table-hover">
-                        <thead class="thead-dark">
+                    <table id="customers-table" class="table table-sm table-hover table-borderless">
+                        <thead class="">
                         <tr>
-                            <th scope="col">Név</th>
-                            <th scope="col">Város</th>
-                            <th scope="col">Telefonszám</th>
-                            <th scope="col">E-mail</th>
-                            <th scope="col">Típus</th>
+                            <th scope="col" class="tr-clickable" data-sort="string">Név</th>
+                            <th scope="col" class="tr-clickable" data-sort="string">Város</th>
+                            <th scope="col" class="tr-clickable" data-sort="int">Telefonszám</th>
+                            <th scope="col" class="tr-clickable" data-sort="string">E-mail</th>
+                            <th scope="col" class="tr-clickable" data-sort="string">Típus</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($customers as $customer)
-                            <tr class="tr-clickable"
+                            <tr class="tr-clickable action-hover-only"
                                 data-redirect-to="{{ action('CustomersController@show', $customer) }}">
                                 <td>{{ $customer->name }}</td>
                                 <td>{{ $customer->address->city }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->getResellerLabel() }}</td>
+                                <td class="td-action text-right">
+                                   <form action="{{ action('CustomersController@delete', $customer) }}" method="POST">
+                                       @csrf
+                                       @method('DELETE')
+                                       <button class="btn btn-del-customer btn-sm btn-muted p-0">
+                                            <span class="icon">
+                                                <i class="far fa-times-circle"></i>
+                                            </span>
+                                       </button>
+                                   </form>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -93,11 +105,24 @@
     <script>
         $(function () {
             const formFilter = $('#form-filter');
-            $('.tr-clickable').on('click', (e) => {
-                console.log(e);
-                window.location = e.currentTarget.dataset.redirectTo
+
+            // Törlő gomb
+            $('.btn-del-customer').on('click', (e) => {
+                if (!confirm('Biztosan törölni szeretnéd a terméket? Ez a folyamat nem visszafordítható.')) {
+                    e.preventDefault();
+                }
             });
 
+            // Kattintható sorok
+            $('.tr-clickable').on('click', (e) => {
+                if (e.currentTarget.dataset.redirectTo &&
+                    $(e.target).closest('.btn-del-customer').length === 0
+                ) {
+                    window.location = e.currentTarget.dataset.redirectTo
+                }
+            });
+
+            // Reset
             $('#btn-reset-filter-form').on('click', () => {
                 // Ürítsük a nevet
                 $('#filter-name').val('');
@@ -116,6 +141,9 @@
             });
             // Un-disable form fields when page loads, in case they click back after submission or client side validation
             formFilter.find(":input").prop("disabled", false);
+
+            // Stupid table
+            $("#customers-table").stupidtable();
         });
     </script>
 @endsection

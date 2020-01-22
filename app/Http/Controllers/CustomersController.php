@@ -130,4 +130,32 @@ class CustomersController extends Controller
             'total' => $total
         ]);
     }
+
+    /**
+     * Kitörli a megrendelőt a hozzá tartozó lakcímmel és vásárolt termékekkel együtt.
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function delete($id) {
+        // Megkeressük a felhasználót
+        $customer = Customer::find($id);
+
+        // Kitöröljük a lakcímét
+        $customer->address()->each(function ($address) {
+           $address->delete();
+        });
+
+        // Kitöröljük a rögzített termékeit
+        $customer->purchases()->each(function ($purchase) {
+            $purchase->delete();
+        });
+
+        // Kitöröljük a felhasználót
+         $customer->delete();
+
+        return redirect(action('CustomersController@index'))->with([
+            'success' => 'Megrendelő sikeresen törölve'
+        ]);
+    }
 }

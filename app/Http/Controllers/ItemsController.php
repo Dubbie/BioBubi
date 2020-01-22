@@ -69,4 +69,19 @@ class ItemsController extends Controller
             'item' => $item,
         ]);
     }
+
+    /**
+     * Kitörli a megadott ID alapján a terméket
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function delete($id)
+    {
+        Item::destroy($id);
+
+        return redirect(action('ItemsController@index'))->with([
+            'success' => 'Termék sikeresen törölve az adatbázisból!'
+        ]);
+    }
 }

@@ -28,6 +28,11 @@ class Customer extends Model
         return $this->hasMany('App\Comment', 'customer_id');
     }
 
+    /**
+     * Visszaadja a megrendelőhöz tartozó rögzített termékeket
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function purchases() {
         return $this->hasMany('App\CustomerItems', 'customer_id');
     }

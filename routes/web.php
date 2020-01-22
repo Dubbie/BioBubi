@@ -21,6 +21,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/', 'CustomersController@index');
     Route::get('/megrendelok/uj', 'CustomersController@create');
     Route::get('/megrendelok/{id}', 'CustomersController@show');
+    Route::delete('/megrendelok/{id}', 'CustomersController@delete');
     Route::post('/megrendelok', 'CustomersController@store');
 
     // Megjegyzések kontrolleres
@@ -35,6 +36,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/termekek', 'ItemsController@index');
     Route::get('/termekek/uj', 'ItemsController@create');
     Route::get('/termekek/{id}', 'ItemsController@show');
+    Route::delete('/termekek/{id}', 'ItemsController@delete');
     Route::post('/termekek', 'ItemsController@store');
 
     Route::get('/home', 'HomeController@index')->name('home');

@@ -38,7 +38,7 @@
                                 <h5 class="font-weight-bold">Megvásárolt termékek:</h5>
                                 @foreach($customer->purchases as $purchase)
                                     <div class="mb-0 d-flex justify-content-between">
-                                        <span class="h5 item-name font-weight-light"><span class="font-weight-bold">{{ $purchase->quantity }}db</span> {{ $purchase->item->name }}</span>
+                                        <span class="h5 item-name font-weight-light"><span class="font-weight-bold">{{ $purchase->quantity }}db</span> {{ $purchase->item ? $purchase->item->name : 'Törölt termék' }}</span>
                                         <span class="h5 item-price">{{ $purchase->price * $purchase->quantity }}<small class="font-weight-bold">Ft</small>
                                             <form class="d-inline-block" action="{{ action('CustomerItemsController@delete', $purchase) }}" method="POST">
                                                 @csrf
@@ -54,7 +54,7 @@
                                 @endforeach
 
                                 {{-- Összegző --}}
-                                <div class="d-flex justify-content-between align-items-baseline border-top">
+                                <div class="d-flex justify-content-between align-items-baseline border-top pt-2">
                                     <span class="mr-2">Összesen: </span>
                                     <h3 class="font-weight-bold">{{ $total }}<small class="font-weight-bold">Ft</small></h3>
                                 </div>
@@ -121,7 +121,7 @@
                                           required></textarea>
                             </div>
                             <div class="form-group text-right mb-0">
-                                <button class="btn btn-sm btn-success">Beküldés</button>
+                                <button type="submit" class="btn btn-sm btn-success">Beküldés</button>
                             </div>
                         </form>
                     </div>
@@ -210,11 +210,11 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-end">
                         <div>
-                            <a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-outline-primary">Hiányzó termék hozzáadása</a>
+                            <a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-link text-muted pl-0">Hiányzó termék hozzáadása</a>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-sm btn-link" data-dismiss="modal">Bezárás</button>
-                            <button class="btn btn-sm btn-success">Termékek rögzítése</button>
+                            <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás</button>
+                            <button type="submit" class="btn btn-sm btn-success">Termékek rögzítése</button>
                         </div>
                     </div>
                 </form>
@@ -255,10 +255,12 @@
                     updateSum();
                 });
 
+                // Új sor a rögzítendő tárgyakhoz
                 $(btnNewItem).on('click', () => {
                     addNewItemInputs();
                 });
 
+                // Új rögzítendő tárgy törlése
                 $(document).on('click.counter', '.btn-del-customer-item', (e) => {
                     const selectItem = e.target;
                     const customerItemRow = $(selectItem).closest('.form-row')[0];
@@ -270,10 +272,20 @@
                     updateSum();
                 });
 
+                // Törlési biztonsági
                 $('.btn-del-purchase').on('click', (e) => {
                    if (!confirm('Biztosan törölni szeretnéd a rögzített vásárlást a termékről? Ez a folyamat nem visszafordítható!')) {
                        e.preventDefault();
                    }
+                });
+
+                // Beküldéskor spinner
+                $('form').on('submit', (e) => {
+                    e.stopPropagation();
+                    const submitBtn = $(e.currentTarget).find('button[type=submit]');
+                    submitBtn.prop('disabled', true);
+                    submitBtn.addClass('disabled');
+                    submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 });
             }
 

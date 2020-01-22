@@ -11369,6 +11369,14 @@ body {
   cursor: pointer;
 }
 
+.action-hover-only .td-action {
+  opacity: 0;
+}
+
+.action-hover-only:hover .td-action {
+  opacity: 1;
+}
+
 .navbar {
   padding-top: 0;
   padding-bottom: 0;

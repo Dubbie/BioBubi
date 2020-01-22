@@ -92,7 +92,7 @@
             </div>
 
             <div class="form-group text-right">
-                <button class="btn btn-success">Hozzáadás</button>
+                <button type="submit" class="btn btn-success">Hozzáadás</button>
             </div>
         </form>
     </div>
@@ -104,16 +104,27 @@
             const details = document.getElementById('customer-details');
 
             function bindAllElements() {
+                // Ügyfél típus választó
                 $('.customer-chooser-input').on('change', (e) => {
                     handleResellerSwitch();
                 });
 
+                // Ir. szám kereső
                 $('#city').on('keyup', (e) => {
                     const query = e.currentTarget.value;
 
                     if (query.length >= 3) {
                         searchByCity(query);
                     }
+                });
+
+                // Spinner
+                $('form').on('submit', (e) => {
+                    e.stopPropagation();
+                    const submitBtn = $(e.currentTarget).find('button[type=submit]');
+                    submitBtn.prop('disabled', true);
+                    submitBtn.addClass('disabled');
+                    submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 });
             }
 

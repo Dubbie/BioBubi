@@ -5,7 +5,10 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Termékek</h1>
             <div class="btn-toolbar">
-                <a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-outline-dark">Új termék</a>
+                <button type="button" class="btn btn-sm btn-outline-dark" data-toggle="modal"
+                        data-target="#newItemModal">
+                    Új termék
+                </button>
             </div>
         </div>
 
@@ -13,27 +16,54 @@
         @if(count($items) > 0)
             <div class="row">
                 <div class="col-md-8">
-                    <table class="table table-sm table-hover">
-                        <thead class="thead-dark">
+                    <table class="table table-borderless">
+                        <thead>
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Név</th>
-                            <th scope="col">Ár</th>
+                            <th scope="col" class="text-right">Ár</th>
+                            <th scope="col" class="text-right">Rögzítve</th>
+                            <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($items as $item)
-                            <tr class="tr-clickable" data-redirect-to="{{ action('ItemsController@show', $item) }}">
+                            <tr data-redirect-to="{{ action('ItemsController@show', $item) }}">
                                 <td class="text-muted">{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->price }}</td>
+                                <td class="text-right">{{ $item->getFormattedPrice(true) }}</td>
+                                <td class="text-right">
+                                    @php
+                                        $count = 0;
+
+                                        foreach($item->purchases as $purchase) {
+                                            $count += $purchase->quantity;
+                                        }
+                                    @endphp
+
+                                    {{ $count . 'db' }}
+                                </td>
+                                <td class="td-hover-only text-right">
+                                    <form action="{{ action('ItemsController@delete', $item) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-del-item btn-sm btn-muted p-0">
+                                            <span class="icon">
+                                                <i class="far fa-times-circle"></i>
+                                            </span>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-4">
-                    <p class="lead">Az itt szereplő termékek azok, amiket akkor látsz, ha új vásárlást rögzítesz egy felhasználóhoz.</p>
+                    <div class="alert alert-info">
+                        <p class="lead mb-0">Az itt szereplő termékek azok, amiket akkor látsz, ha új vásárlást
+                            rögzítesz egy felhasználóhoz.</p>
+                    </div>
                 </div>
             </div>
         @else
@@ -41,15 +71,68 @@
             <p><a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-primary">Termék hozzáadása</a></p>
         @endif
     </div>
+
+    {{-- Új termék modal --}}
+    <div class="modal fade" id="newItemModal" tabindex="-1" role="dialog" aria-labelledby="newItemModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="form-new-item" action="{{ action('ItemsController@store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newItemModalLabel">Új termék</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row align-items-end">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="name">Termék megnevezése</label>
+                                    <input type="text" id="name" name="name" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="price">Ár</label>
+                                    <div class="input-group mb-3">
+                                        <input type="tel" id="price" name="price" class="form-control"
+                                               aria-label="Termék ára" aria-describedby="basic-addon2" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon2">Ft</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás</button>
+                        <button type="submit" class="btn btn-sm btn-success">Hozzáadás</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('custom-scripts')
     <script>
         $(function () {
-           $('.tr-clickable').on('click', (e) => {
-               console.log(e);
-               window.location = e.currentTarget.dataset.redirectTo
-           });
+            $('.btn-del-item').on('click', (e) => {
+                if (!confirm('Biztosan törölni szeretnéd a terméket? Ez a folyamat nem visszafordítható.')) {
+                    e.preventDefault();
+                }
+            });
+
+            $('#form-new-item').on('submit', (e) => {
+                e.stopPropagation();
+                const submitBtn = $(e.currentTarget).find('button[type=submit]');
+                submitBtn.prop('disabled', true);
+                submitBtn.addClass('disabled');
+                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+            });
         });
     </script>
 @endsection
