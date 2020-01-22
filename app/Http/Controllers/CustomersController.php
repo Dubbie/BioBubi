@@ -7,6 +7,7 @@ use App\Customer;
 use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CustomersController extends Controller
 {
@@ -57,12 +58,26 @@ class CustomersController extends Controller
     }
 
     /**
-     * Mutatja az új megrendelő létrehozására szolgáló panelt
+     * Mutatja az új megrendelő létrehozására szolgáló panelt.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create() {
         return view('customers.create');
+    }
+
+    /**
+     * Megrendelő szerkesztő felület.
+     *
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function edit($id) {
+        $customer = Customer::find($id);
+
+        return view('customers.edit')->with([
+            'customer' => $customer,
+        ]);
     }
 
     /**
@@ -85,8 +100,8 @@ class CustomersController extends Controller
         // 1. Lakcím elmentése
         $address = new Address();
         $address->zip = $validated_data['zip'];
-        $address->city = $validated_data['city'];
-        $address->street = $validated_data['street'];
+        $address->city = Str::title($validated_data['city']);
+        $address->street = Str::title($validated_data['street']);
         $address->save();
 
         // 2. Megrendelő elmentése
@@ -96,9 +111,9 @@ class CustomersController extends Controller
         $phone = preg_replace("/[^0-9]/", "", $validated_data['phone'] );
         // -- Elkezdjük a mentést
         $customer = new Customer();
-        $customer->name = $validated_data['name'];
+        $customer->name = Str::title($validated_data['name']);
         $customer->phone = $phone;
-        $customer->email = $validated_data['email'];
+        $customer->email = strtolower($validated_data['email']);
         $customer->address_id = $address->id;
         $customer->is_reseller = $is_reseller;
         $customer->save();
@@ -106,6 +121,50 @@ class CustomersController extends Controller
         // Sikeres mentés esetén átirányítjuk az új ügyfél oldalára
         return redirect(action('CustomersController@show', $customer))->with([
             'success' => 'Új megrendelő sikeresen létrehozva!',
+        ]);
+    }
+
+    /**
+     * Frissít egy meglévő felhaszálót
+     *
+     * @param $customer_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update($customer_id, Request $request) {
+        $customer = Customer::find($customer_id);
+
+        $validated_data = $request->validate([
+            'name' => 'required',
+            'phone' => 'required|unique:customers,phone,' . $customer_id,
+            'zip' => 'required',
+            'city' => 'required',
+            'street' => 'required',
+            'email' => 'required|unique:customers,email,' . $customer_id . '|email',
+            'is_reseller' => 'required',
+        ]);
+
+        // 1. Lakcím felülírása
+        $customer->address->zip = $validated_data['zip'];
+        $customer->address->city = Str::title($validated_data['city']);
+        $customer->address->street = Str::title($validated_data['street']);
+        $customer->address->save();
+
+        // 2. Megrendelő elmentése
+        // -- Eldöntjük, hogy a megrendelő viszonteladó, vagy ügyfél
+        $is_reseller = $validated_data['is_reseller'] == 'true' ? true : false;
+        // -- Semlegesítjük a telefonszámot, csak számokból álljon
+        $phone = preg_replace("/[^0-9]/", "", $validated_data['phone'] );
+        // -- Elkezdjük a mentést
+        $customer->name = Str::title($validated_data['name']);
+        $customer->phone = $phone;
+        $customer->email = strtolower($validated_data['email']);
+        $customer->is_reseller = $is_reseller;
+        $customer->save();
+
+        // Sikeres mentés esetén átirányítjuk az új ügyfél oldalára
+        return redirect(action('CustomersController@show', $customer))->with([
+            'success' => 'Új megrendelő sikeresen módosítva!',
         ]);
     }
 

@@ -3,6 +3,10 @@ $hovered: 0.5;
 $active: 1;
 $transition-speed: 250ms;
 
+.copyable {
+  cursor: pointer;
+}
+
 .customer-chooser {
   .customer-chooser-label {
     color: #000000;

@@ -5,9 +5,10 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Megrendelő részletek</h1>
             <div class="btn-toolbar">
-                <a href="{{ action('CustomersController@index') }}" class="btn btn-sm btn-link mr-2 text-decoration-none">Vissza</a>
-                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-primary">Új
+                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-primary mr-2">Új
                     megrendelő</a>
+                <a href="{{ action('CustomersController@edit', $customer) }}"
+                   class="btn btn-sm btn-primary">Megrendelő szerkesztése</a>
             </div>
         </div>
 
@@ -22,28 +23,40 @@
                         <div class="col-md-6">
                             <small class="d-block font-weight-bold">Név</small>
                             <p id="customer-{{ $customer->id }}-name"
-                               class="lead mb-2 copyable">{{ $customer->name }}</p>
+                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Név kimásolva">{{ $customer->name }}</p>
                             <small class="d-block font-weight-bold">Telefonszám</small>
                             <p id="customer-{{ $customer->id }}-phone"
-                               class="lead mb-2 copyable">{{ $customer->phone }}</p>
+                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Telefonszám kimásolva">{{ $customer->phone }}</p>
                             <small class="d-block font-weight-bold">Lakcím</small>
                             <p id="customer-{{ $customer->id }}-address"
-                               class="lead mb-2 copyable">{{ $customer->address->getFormattedAddress() }}</p>
+                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Lakcím kimásolva">{{ $customer->address->getFormattedAddress() }}</p>
                             <small class="d-block font-weight-bold">E-mail</small>
                             <p id="customer-{{ $customer->id }}-email"
-                               class="lead mb-0 copyable">{{ $customer->email }}</p>
+                               class="d-inline-block lead mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                               title="E-mail kimásolva">{{ $customer->email }}</p>
                         </div>
                         <div class="col-md-6">
                             @if(count($customer->purchases) > 0)
                                 <h5 class="font-weight-bold">Megvásárolt termékek:</h5>
                                 @foreach($customer->purchases as $purchase)
-                                    <div class="mb-0 d-flex justify-content-between">
-                                        <span class="h5 item-name font-weight-light"><span class="font-weight-bold">{{ $purchase->quantity }}db</span> {{ $purchase->item ? $purchase->item->name : 'Törölt termék' }}</span>
-                                        <span class="h5 item-price">{{ $purchase->price * $purchase->quantity }}<small class="font-weight-bold">Ft</small>
-                                            <form class="d-inline-block" action="{{ action('CustomerItemsController@delete', $purchase) }}" method="POST">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="h5 mb-0 item-name font-weight-light">
+                                            <span class="font-weight-bold">{{ $purchase->quantity }}db</span>
+                                            <span>{{ $purchase->getItemName() }}</span>
+                                            @if($purchase->date)
+                                                <small class="d-block text-small">{{ $purchase->date->format('Y M d, H:i') }}</small> @endif
+                                        </span>
+                                    <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
+                                        <small class="font-weight-bold">Ft</small>
+                                            <form class="d-inline-block"
+                                                  action="{{ action('CustomerItemsController@delete', $purchase) }}"
+                                                  method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="btn-del-purchase btn btn-muted btn-sm px-1">
+                                                <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
                                                     <span class="icon">
                                                         <i class="far fa-times-circle"></i>
                                                     </span>
@@ -54,9 +67,11 @@
                                 @endforeach
 
                                 {{-- Összegző --}}
-                                <div class="d-flex justify-content-between align-items-baseline border-top pt-2">
+                                <div class="d-flex justify-content-between align-items-baseline border-top mt-2 pt-2">
                                     <span class="mr-2">Összesen: </span>
-                                    <h3 class="font-weight-bold">{{ $total }}<small class="font-weight-bold">Ft</small></h3>
+                                    <h3 class="font-weight-bold">{{ number_format($total, 0, '.', ' ') }}
+                                        <small class="font-weight-bold">Ft</small>
+                                    </h3>
                                 </div>
 
                                 {{-- További vásárlások rögzítése --}}
@@ -76,39 +91,70 @@
                         <div class="col-md-6">
                             <small class="d-block font-weight-bold">Név</small>
                             <p id="customer-{{ $customer->id }}-name"
-                               class="lead mb-0 copyable">{{ $customer->name }}</p>
+                               class="lead d-inline-block mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Név kimásolva">{{ $customer->name }}</p>
                         </div>
                         <div class="col-md-6">
                             <small class="d-block font-weight-bold">Telefonszám</small>
                             <p id="customer-{{ $customer->id }}-phone"
-                               class="lead mb-0 copyable">{{ $customer->phone }}</p>
+                               class="lead d-inline-block mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Telefonszám kimásolva">{{ $customer->phone }}</p>
                         </div>
                         <div class="col-md-6">
                             <small class="d-block font-weight-bold">Lakcím</small>
                             <p id="customer-{{ $customer->id }}-address"
-                               class="lead mb-0 copyable">{{ $customer->address->getFormattedAddress() }}</p>
+                               class="lead d-inline-block mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                               title="Lakcím kimásolva">{{ $customer->address->getFormattedAddress() }}</p>
                         </div>
                         <div class="col-md-6">
                             <small class="d-block font-weight-bold">E-mail</small>
                             <p id="customer-{{ $customer->id }}-email"
-                               class="lead mb-0 copyable">{{ $customer->email }}</p>
+                               class="lead d-inline-block mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                               title="E-mail kimásolva">{{ $customer->email }}</p>
                         </div>
                     @endif
                 </div>
 
                 <div class="row mt-4">
                     <div class="col-12">
-                        <p class="font-weight-bold mb-0">Megjegyzések</p>
+                        <h3 class="font-weight-bold mb-0">Megjegyzések</h3>
                         @if(count($customer->comments) > 0)
-                            @foreach($customer->comments as $comment)
-                                <div class="comment">
-                                    <div class="comment-header d-flex justify-content-between align-items-start">
-                                        <p class="h5 font-weight-bold mb-0">{{ $comment->author->name }}</p>
-                                        <small class="text-muted">{{ $comment->created_at->format('Y M d, H:i:s') }}</small>
+                            <div class="comments-container mt-2">
+                                @foreach($customer->comments as $comment)
+                                    <div class="comment" style="border-left-color: {{ $comment->author->color }}">
+                                        <div class="comment-header d-flex justify-content-between align-items-start">
+                                            <p class="h5 font-weight-bold mb-0">{{ $comment->author->name }}</p>
+                                            <div class="action">
+                                                @if($comment->user_id == Auth::id())
+                                                    {{-- Szerkesztés gomb --}}
+                                                    <button type="button" class="btn btn-edit-comment btn-sm btn-muted px-1 py-0"
+                                                            data-toggle="modal"
+                                                            data-comment-id="{{ $comment->id }}"
+                                                            data-comment-message="{{ $comment->message }}"
+                                                            data-target="#editCommentModal">
+                                                        <span class="icon">
+                                                            <i class="fas fa-pen"></i>
+                                                        </span>
+                                                    </button>
+
+                                                    {{-- Törlés gomb--}}
+                                                    <form action="{{ action('CommentsController@delete', $comment) }}" class="d-inline-block mr-2" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-del-comment btn-muted px-1 py-0">
+                                                            <span class="icon">
+                                                                <i class="far fa-times-circle"></i>
+                                                            </span>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <small class="text-muted">{{ $comment->updated_at->format('Y M d, H:i:s') }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="lead comment-message">{{ $comment->message }}</div>
                                     </div>
-                                    <div class="lead comment-message text-muted">{{ $comment->message }}</div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         @else
                             <p class="lead">A megrendelőhöz még nem fűzött hozzá senki semmit.</p>
                         @endif
@@ -116,11 +162,15 @@
                             @csrf
                             <input type="hidden" name="customer_id" value="{{ $customer->id }}" required>
                             <div class="form-group mt-2">
-                                <label for="message" ><small class="font-weight-bold">Új komment</small></label>
+                                <label for="message">
+                                    <small class="font-weight-bold">Új komment</small>
+                                </label>
                                 <textarea name="message" id="message" cols="30" rows="5" class="form-control"
                                           required></textarea>
                             </div>
-                            <div class="form-group text-right mb-0">
+                            <div class="form-group d-flex justify-content-between mb-0">
+                                <a href="{{ action('CustomersController@index') }}"
+                                   class="btn btn-sm btn-link pl-0 text-decoration-none">Vissza</a>
                                 <button type="submit" class="btn btn-sm btn-success">Beküldés</button>
                             </div>
                         </form>
@@ -162,6 +212,12 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label for="date_1">Időpont</label>
+                                        <input type='text' class="form-control" id="date_1" name="date[]">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
                                         <label for="price_1">Ár</label>
                                         <div class="input-group mb-0">
                                             <input type="tel" id="price_1" name="price[]"
@@ -177,7 +233,7 @@
                                     <div class="form-group">
                                         <label for="quantity_1">Mennyiség</label>
                                         <div class="input-group mb-0">
-                                            <input type="number" id="quantity_1" name="quantity[]"
+                                            <input type="tel" id="quantity_1" name="quantity[]"
                                                    class="form-control customer-item-quantity"
                                                    aria-label="Termék ára" aria-describedby="basic-addon2" min="1"
                                                    required>
@@ -197,7 +253,8 @@
                         <div class="row align-items-end">
                             <div class="col">
                                 <button id="newCustomerItem" type="button"
-                                        class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Rögzítendő termék hozzáadása
+                                        class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Rögzítendő termék
+                                    hozzáadása
                                 </button>
                             </div>
                             <div class="col text-right">
@@ -210,12 +267,47 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-end">
                         <div>
-                            <a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-link text-muted pl-0">Hiányzó termék hozzáadása</a>
+                            <a href="{{ action('ItemsController@create') }}"
+                               class="btn btn-sm btn-link text-muted pl-0">Hiányzó termék hozzáadása</a>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás</button>
+                            <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás
+                            </button>
                             <button type="submit" class="btn btn-sm btn-success">Termékek rögzítése</button>
                         </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Megjegyzés szerkesztés --}}
+    <div class="modal fade" id="editCommentModal" tabindex="-1" role="dialog"
+         aria-labelledby="editCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form action="{{ action('CommentsController@update') }}" method="POST"
+                      autocomplete="off">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="edit_comment_id" name="edit_comment_id" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCommentModalLabel">Megjegyzés szerkesztése</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="edit_message">Üzenet</label>
+                            <textarea name="edit_message" id="edit_message" class="form-control" cols="30"
+                                      rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-right">
+                        <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás
+                        </button>
+                        <button type="submit" class="btn btn-sm btn-success">Megjegyzés frissítése</button>
                     </div>
                 </form>
             </div>
@@ -231,7 +323,15 @@
             const btnNewItem = document.getElementById('newCustomerItem');
             let customerItemCounter = 1;
 
+            /**
+             * Események bindelése
+             */
             function bindAllElements() {
+                $('.btn-edit-comment').on('click', (e) => {
+                    document.getElementById('edit_comment_id').value = e.currentTarget.dataset.commentId;
+                    document.getElementById('edit_message').value = e.currentTarget.dataset.commentMessage;
+                });
+
                 // Bindeljük be, ha a select változik akkor mi történjen
                 $(document).on('change.counter', '.customer-item-id', (e) => {
                     const selectItem = e.target;
@@ -274,9 +374,9 @@
 
                 // Törlési biztonsági
                 $('.btn-del-purchase').on('click', (e) => {
-                   if (!confirm('Biztosan törölni szeretnéd a rögzített vásárlást a termékről? Ez a folyamat nem visszafordítható!')) {
-                       e.preventDefault();
-                   }
+                    if (!confirm('Biztosan törölni szeretnéd a rögzített vásárlást a termékről? Ez a folyamat nem visszafordítható!')) {
+                        e.preventDefault();
+                    }
                 });
 
                 // Beküldéskor spinner
@@ -287,11 +387,35 @@
                     submitBtn.addClass('disabled');
                     submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 });
+
+                // Másolás
+                $('.copyable').on('click', (e) => {
+                    copyToClipboard(e.target.innerText);
+                    $(e.target).tooltip('enable');
+                    $(e.target).tooltip('show');
+                    console.log('showing tooltip');
+
+                    window.setTimeout(() => {
+                        $(e.target).tooltip('hide');
+                        $(e.target).tooltip('disable');
+                        console.log('hiding tooltip');
+                    }, 2500);
+                });
+
+                // Megjegyzés törlés
+                $('.btn-del-comment').on('click', (e) => {
+                    if (!confirm('Biztosan szeretnéd a kommentet törölni? Ez a folyamat nem visszafordítható.')) {
+                        e.preventDefault();
+                    }
+                });
             }
 
+            /**
+             * Betölt egy új rögzítendő terméket.
+             */
             function addNewItemInputs() {
-                // Húbazdmeg
                 customerItemCounter++;
+
                 fetch('{{ action('CustomerItemsController@loadNew') }}', {
                     method: 'POST',
                     headers: {
@@ -303,14 +427,15 @@
                     return response.text();
                 }).then((html) => {
                     $(elContainer).append(html);
-                    //
-                    // inputPrices = document.querySelectorAll('.customer-item-price');
-                    // $(inputPrices).each((i, el) => {
-                    //     console.log(el);
-                    // });
-                })
+
+                    // Inicializáljuk az új dátum időpont választót
+                    initDateTimePicker('date_' + customerItemCounter);
+                });
             }
 
+            /**
+             * Frissíti az összegszámlálót.
+             */
             function updateSum() {
                 // Megkeressük az összes termék árát
                 let sum = 0;
@@ -333,9 +458,54 @@
                 elSum.innerText = sum.toString();
             }
 
+            /**
+             * Kimásolja a megadott szöveget a vágólapra.
+             */
+            function copyToClipboard(str) {
+                const el = document.createElement('textarea');  // Create a <textarea> element
+                el.value = str;                                 // Set its value to the string that you want copied
+                el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+                document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+                const selected =
+                    document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+                        ? document.getSelection().getRangeAt(0)     // Store selection if found
+                        : false;                                    // Mark as false to know no selection existed before
+                el.select();                                    // Select the <textarea> content
+                document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+                document.body.removeChild(el);                  // Remove the <textarea> element
+                if (selected) {                                 // If a selection existed before copying
+                    document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+                    document.getSelection().addRange(selected);   // Restore the original selection
+                }
+            }
+
+            /**
+             * Inicializálja a date time választót a megadott ID alapján.
+             * @param id
+             */
+            function initDateTimePicker(id) {
+                $('#' + id).datetimepicker({
+                    dayOfWeekStart: 1,
+                });
+            }
+
+            /**
+             * Konstruktor szerű
+             */
             function init() {
                 bindAllElements();
                 updateSum();
+
+                // Tooltipes basz
+                $('.tooltip').tooltip({
+                    trigger: 'manual'
+                });
+
+                // Datetime picker
+                $.datetimepicker.setLocale('hu');
+                initDateTimePicker('date_1');
             }
 
             init();

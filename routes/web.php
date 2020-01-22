@@ -25,11 +25,15 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/', 'CustomersController@index');
     Route::get('/megrendelok/uj', 'CustomersController@create');
     Route::get('/megrendelok/{id}', 'CustomersController@show');
+    Route::get('/megrendelok/{id}/szerkesztes', 'CustomersController@edit');
+    Route::put('/megrendelok/{id}', 'CustomersController@update');
     Route::delete('/megrendelok/{id}', 'CustomersController@delete');
     Route::post('/megrendelok', 'CustomersController@store');
 
     // Megjegyzések kontrolleres
     Route::post('/megjegyzesek/uj', 'CommentsController@store');
+    Route::put('/megjegyzesek/szerkesztes', 'CommentsController@update');
+    Route::delete('/megjegyzesek/{id}', 'CommentsController@delete');
 
     // Megrendelő termékei kontrolleres
     Route::post('/termekek/megrendelo/', 'CustomerItemsController@store');
@@ -41,7 +45,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/termekek/uj', 'ItemsController@create');
     Route::get('/termekek/{id}', 'ItemsController@show');
     Route::delete('/termekek/{id}', 'ItemsController@delete');
+    Route::put('/termekek', 'ItemsController@update');
     Route::post('/termekek', 'ItemsController@store');
+
 
     Route::get('/home', 'HomeController@index')->name('home');
 });

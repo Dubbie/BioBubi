@@ -4,9 +4,6 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-start">
             <h1 class="font-weight-bold">Új megrendelő hozzáadása</h1>
-            <div class="btn-toolbar">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-link text-decoration-none">Vissza</a>
-            </div>
         </div>
 
         @include('inc.messages')
@@ -62,16 +59,16 @@
                 <div class="form-row">
                     <div class="col-lg-6">
                         <div class="form-row">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="zip">Ir. Szám</label>
-                                    <input type="number" id="zip" name="zip" class="form-control" value="{{ old('zip') }}" required>
-                                </div>
-                            </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label for="city">Város</label>
                                     <input type="text" id="city" name="city" class="form-control" value="{{ old('city') }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="zip">Ir. Szám</label>
+                                    <input type="text" id="zip" name="zip" class="form-control" value="{{ old('zip') }}" required>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -91,7 +88,8 @@
                 </div>
             </div>
 
-            <div class="form-group text-right">
+            <div class="form-group d-flex justify-content-between">
+                <a href="{{ url()->previous() }}" class="btn pl-0 btn-sm btn-link text-decoration-none">Vissza</a>
                 <button type="submit" class="btn btn-success">Hozzáadás</button>
             </div>
         </form>
@@ -102,6 +100,7 @@
     <script>
         $(function() {
             const details = document.getElementById('customer-details');
+            const inputZip = document.getElementById('zip');
 
             function bindAllElements() {
                 // Ügyfél típus választó
@@ -129,13 +128,16 @@
             }
 
             function searchByCity(query) {
+                $(inputZip).attr('readonly', true);
                 fetch('https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json?apiKey=C5r9d8VTg4gOFb56KZZIUg-LKcy4RwMRyeisBLh4F6c&query=' + query + '&country=HUN&beginHighlight=<b>&endHighlight=</b>')
                     .then((response) => response.json())
                     .then((data) => {
                         const postalCode = data['suggestions'][0]['address']['postalCode'];
                         if (postalCode) {
-                            document.getElementById('zip').value = postalCode;
+                            inputZip.value = postalCode;
                         }
+                    }).finally(() => {
+                        $(inputZip).attr('readonly', false);
                     });
             }
 

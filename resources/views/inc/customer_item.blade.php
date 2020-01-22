@@ -13,6 +13,12 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
+                <label for="date_{{ $count }}">Időpont</label>
+                <input type='text' class="form-control" id="date_{{ $count }}" name="date[]">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
                 <label for="price_{{ $count }}">Ár</label>
                 <div class="input-group mb-0">
                     <input type="tel" id="price_{{ $count }}" name="price[]" class="form-control customer-item-price"

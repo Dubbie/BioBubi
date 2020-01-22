@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ItemsController extends Controller
 {
@@ -32,7 +33,7 @@ class ItemsController extends Controller
     }
 
     /**
-     * Elmenti az új megrendelőt
+     * Elmenti az új terméket
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -45,13 +46,40 @@ class ItemsController extends Controller
         ]);
 
         $item = new Item();
-        $item->name = $validated_data['name'];
+        $item->name = Str::title($validated_data['name']);
         $item->price = intval($validated_data['price']);
         $item->save();
 
         // Sikeres mentés esetén átirányítjuk az új ügyfél oldalára
         return redirect(action('ItemsController@index'))->with([
             'success' => 'Új termék sikeresen létrehozva!',
+        ]);
+    }
+
+    /**
+     * Frissíti a meglévő terméket
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update(Request $request)
+    {
+        $validated_data = $request->validate([
+            'edit_item_id' => 'required',
+            'edit_name' => 'required|unique:items,name,' . $request->input('edit_item_id'),
+            'edit_price' => 'required',
+        ]);
+
+        $item = Item::find($validated_data['edit_item_id']);
+
+        $item->name = Str::title($validated_data['edit_name']);
+        $item->price = intval($validated_data['edit_price']);
+
+        $item->save();
+
+        // Sikeres mentés esetén átirányítjuk a termékek felületre
+        return redirect(action('ItemsController@index'))->with([
+            'success' => 'Termék sikeresen frissítve!',
         ]);
     }
 

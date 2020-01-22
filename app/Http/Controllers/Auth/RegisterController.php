@@ -67,7 +67,17 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'color' => $this->rand_color(),
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    /**
+     * Generates a random HEX color
+     *
+     * @return string
+     */
+    private function rand_color() {
+        return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
     }
 }

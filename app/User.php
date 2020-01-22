@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'color'
     ];
 
     /**
@@ -36,4 +36,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Visszaadja a felhasználóhoz tartozó színt
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getColorAttribute($value)
+    {
+        return '#' . $value;
+    }
 }

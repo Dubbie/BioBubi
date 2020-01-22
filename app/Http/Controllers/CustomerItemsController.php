@@ -20,14 +20,18 @@ class CustomerItemsController extends Controller
             'item_id' => 'required',
             'price' => 'required',
             'quantity' => 'required',
+            'date' => 'nullable',
         ]);
-
         // Végigmegyünk a megadott termékeken
         for ($i = 0; $i < count($validated_data['item_id']); $i++) {
+            $actual_item = Item::find(intval($validated_data['item_id'][$i]));
+
             $customer_item = new CustomerItems();
             $customer_item->item_id = intval($validated_data['item_id'][$i]);
+            $customer_item->item_name = $actual_item->name;
             $customer_item->price = intval($validated_data['price'][$i]);
             $customer_item->quantity = intval($validated_data['quantity'][$i]);
+            $customer_item->date = $validated_data['date'][$i];
             $customer_item->customer_id = intval($validated_data['customer_id']);
             $customer_item->save();
         }

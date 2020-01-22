@@ -75,10 +75,15 @@
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->getResellerLabel() }}</td>
                                 <td class="td-action text-right">
-                                   <form action="{{ action('CustomersController@delete', $customer) }}" method="POST">
+                                    <a href="{{ action('CustomersController@edit', $customer) }}" class="btn btn-sm btn-muted p-1">
+                                        <span class="icon">
+                                            <i class="fas fa-pen"></i>
+                                        </span>
+                                    </a>
+                                   <form action="{{ action('CustomersController@delete', $customer) }}" class="d-inline-block" method="POST">
                                        @csrf
                                        @method('DELETE')
-                                       <button class="btn btn-del-customer btn-sm btn-muted p-0">
+                                       <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
                                             <span class="icon">
                                                 <i class="far fa-times-circle"></i>
                                             </span>

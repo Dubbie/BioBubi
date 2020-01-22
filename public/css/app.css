@@ -11406,6 +11406,14 @@ body {
   background: url("/storage/bg.jpg") #29004e no-repeat fixed;
 }
 
+.text-small {
+  font-size: 0.8rem;
+}
+
+.copyable {
+  cursor: pointer;
+}
+
 .customer-chooser .customer-chooser-label {
   color: #000000;
 }
@@ -11490,12 +11498,17 @@ body {
 
 .comment {
   padding: 0.5rem 1rem;
-  color: #ffffff;
-  background-color: #2560ce;
   border: 0;
+  border-left: 5px solid #000;
 }
 
 .comment .text-muted {
-  color: #bfc8e6 !important;
+  color: #5e77a2 !important;
+}
+
+.toast {
+  position: absolute;
+  top: 5rem;
+  right: 5rem;
 }
 
