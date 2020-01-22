@@ -6,19 +6,53 @@ use App\Address;
 use App\Customer;
 use App\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomersController extends Controller
 {
     /**
      * Betölti a meglévő megrendelőket
      *
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index() {
-        $customers = Customer::all();
+    public function index(Request $request) {
+        $customers_query = Customer::query();
+        $filter = [];
 
+        // Név szűrés
+        if ($request->has('filter-name')) {
+            if (strlen($request->input('filter-name')) == 0) {
+                $request->request->remove('filter-name');
+            } else {
+                $filter['name'] = $request->input('filter-name');
+                $customers_query->where('name', 'like', sprintf('%%%s%%', $filter['name']));
+            }
+        }
+        if ($request->has('filter-city')) {
+            $filter['city'] = $request->input('filter-city');
+
+            $customers_query->whereHas('address', function ($query) use ($filter) {
+                $query->whereIn('city', $filter['city']);
+            });
+        }
+
+        // Városok szűréshez
+        $cities = Address::select('city', DB::raw('count(*) as total'))->groupBy('city')->get()->toArray();
+
+        if(isset($filter['city'])) {
+            foreach ($cities as &$city) {
+                if (in_array($city['city'], $filter['city'])) {
+                    $city['checked'] = true;
+                }
+            }
+        }
+
+        $customers = $customers_query->orderBy('name', 'asc')->paginate(10);
         return view('customers.index')->with([
             'customers' => $customers,
+            'cities' => $cities,
+            'filter' => $filter,
         ]);
     }
 
