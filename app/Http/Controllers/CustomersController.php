@@ -48,7 +48,7 @@ class CustomersController extends Controller
             }
         }
 
-        $customers = $customers_query->orderBy('name', 'asc')->paginate(10);
+        $customers = $customers_query->orderBy('name', 'asc')->paginate(50);
         return view('customers.index')->with([
             'customers' => $customers,
             'cities' => $cities,

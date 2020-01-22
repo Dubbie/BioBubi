@@ -94,8 +94,8 @@
                 </div>
             </div>
         @else
-            <p class="lead mb-2">Ajjaj! Nincsen még megrendelő az adatbázisban.</p>
-            <p><a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-secondary">Megrendelő
+            <p class="lead mb-2">Nincsen még megrendelő az adatbázisban.</p>
+            <p><a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-primary">Megrendelő
                     hozzáadása</a></p>
         @endif
     </div>

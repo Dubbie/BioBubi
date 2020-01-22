@@ -28,7 +28,7 @@
                         </thead>
                         <tbody>
                         @foreach($items as $item)
-                            <tr data-redirect-to="{{ action('ItemsController@show', $item) }}">
+                            <tr class="action-hover-only" data-redirect-to="{{ action('ItemsController@show', $item) }}">
                                 <td class="text-muted">{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td class="text-right">{{ $item->getFormattedPrice(true) }}</td>
@@ -43,7 +43,7 @@
 
                                     {{ $count . 'db' }}
                                 </td>
-                                <td class="td-hover-only text-right">
+                                <td class="td-action text-right">
                                     <form action="{{ action('ItemsController@delete', $item) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -67,8 +67,11 @@
                 </div>
             </div>
         @else
-            <p class="lead mb-2">Ajjaj! Nincsen még termék az adatbázisban.</p>
-            <p><a href="{{ action('ItemsController@create') }}" class="btn btn-sm btn-primary">Termék hozzáadása</a></p>
+            <p class="lead mb-2">Nincsen még termék az adatbázisban.</p>
+            <p><button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                       data-target="#newItemModal">
+                    Termék hozzáadása
+                </button></p>
         @endif
     </div>
 

@@ -11,10 +11,14 @@
 |
 */
 
-// Authentication Routes...
+// Authentikátor linkjei
 Route::get('belepes', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('belepes', 'Auth\LoginController@login');
 Route::post('kijelentkezes', 'Auth\LoginController@logout')->name('logout');
+
+// Regisztrációs link... óvatosan
+Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('register', 'Auth\RegisterController@register');
 
 Route::group(['middleware' => 'auth'], function() {
     // Megrendelők kontrolleres
