@@ -17,3 +17,12 @@
     border-color: #5b7095;
   }
 }
+
+.btn-muted {
+  color: transparentize(#162642, 0.66);
+  transition: all 250ms ease-in-out;
+
+  &:hover {
+    color: transparentize(#162642, 0.33);
+  }
+}

@@ -5,11 +5,13 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Megrendelő részletek</h1>
             <div class="btn-toolbar">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-link mr-2 text-decoration-none">Vissza</a>
+                <a href="{{ action('CustomersController@index') }}" class="btn btn-sm btn-link mr-2 text-decoration-none">Vissza</a>
                 <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-primary">Új
                     megrendelő</a>
             </div>
         </div>
+
+        @include('inc.messages')
 
         {{-- Részletek --}}
         <div class="row">
@@ -35,12 +37,29 @@
                             @if(count($customer->purchases) > 0)
                                 <h5 class="font-weight-bold">Megvásárolt termékek:</h5>
                                 @foreach($customer->purchases as $purchase)
-                                    <p class="mb-0 d-flex justify-content-between">
+                                    <div class="mb-0 d-flex justify-content-between">
                                         <span class="h5 item-name font-weight-light"><span class="font-weight-bold">{{ $purchase->quantity }}db</span> {{ $purchase->item->name }}</span>
-                                        <span class="h5 item-price">{{ $purchase->price }}<small class="font-weight-bold">Ft</small></span>
-                                    </p>
+                                        <span class="h5 item-price">{{ $purchase->price * $purchase->quantity }}<small class="font-weight-bold">Ft</small>
+                                            <form class="d-inline-block" action="{{ action('CustomerItemsController@delete', $purchase) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn-del-purchase btn btn-muted btn-sm px-1">
+                                                    <span class="icon">
+                                                        <i class="far fa-times-circle"></i>
+                                                    </span>
+                                                </button>
+                                            </form>
+                                        </span>
+                                    </div>
                                 @endforeach
 
+                                {{-- Összegző --}}
+                                <div class="d-flex justify-content-between align-items-baseline border-top">
+                                    <span class="mr-2">Összesen: </span>
+                                    <h3 class="font-weight-bold">{{ $total }}<small class="font-weight-bold">Ft</small></h3>
+                                </div>
+
+                                {{-- További vásárlások rögzítése --}}
                                 <div class="text-center mt-4">
                                     <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal"
                                             data-target="#newCustomerItemsModal">További vásárlások rögzítése
@@ -84,10 +103,10 @@
                             @foreach($customer->comments as $comment)
                                 <div class="comment">
                                     <div class="comment-header d-flex justify-content-between align-items-start">
-                                        <p class="font-weight-bold mb-0">{{ $comment->author->name }}</p>
+                                        <p class="h5 font-weight-bold mb-0">{{ $comment->author->name }}</p>
                                         <small class="text-muted">{{ $comment->created_at->format('Y M d, H:i:s') }}</small>
                                     </div>
-                                    <div class="comment-message text-muted">{{ $comment->message }}</div>
+                                    <div class="lead comment-message text-muted">{{ $comment->message }}</div>
                                 </div>
                             @endforeach
                         @else
@@ -178,7 +197,7 @@
                         <div class="row align-items-end">
                             <div class="col">
                                 <button id="newCustomerItem" type="button"
-                                        class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Új vásárlás hozzáadása
+                                        class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Rögzítendő termék hozzáadása
                                 </button>
                             </div>
                             <div class="col text-right">
@@ -195,7 +214,7 @@
                         </div>
                         <div>
                             <button type="button" class="btn btn-sm btn-link" data-dismiss="modal">Bezárás</button>
-                            <button class="btn btn-sm btn-primary">Változtatások mentése</button>
+                            <button class="btn btn-sm btn-success">Termékek rögzítése</button>
                         </div>
                     </div>
                 </form>
@@ -249,6 +268,12 @@
                     customerItemCounter--;
 
                     updateSum();
+                });
+
+                $('.btn-del-purchase').on('click', (e) => {
+                   if (!confirm('Biztosan törölni szeretnéd a rögzített vásárlást a termékről? Ez a folyamat nem visszafordítható!')) {
+                       e.preventDefault();
+                   }
                 });
             }
 

@@ -37,9 +37,9 @@
         </div>
         <div class="col-md-1">
             <div class="form-group">
-                <button type="button" class="btn-del-customer-item btn btn-link text-dark text-decoration-none">
+                <button type="button" class="btn-del-customer-item btn btn-muted">
                     <span class="icon">
-                        <i class="fas fa-trash"></i>
+                        <i class="far fa-times-circle"></i>
                     </span>
                 </button>
             </div>

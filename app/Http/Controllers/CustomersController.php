@@ -84,10 +84,16 @@ class CustomersController extends Controller
     public function show($id) {
         $customer = Customer::find($id);
         $items = Item::all();
+        $total = 0;
+
+        foreach ($customer->purchases as $purchase) {
+            $total += $purchase->price * $purchase->quantity;
+        }
 
         return view('customers.show')->with([
             'customer' => $customer,
             'items' => $items,
+            'total' => $total
         ]);
     }
 }

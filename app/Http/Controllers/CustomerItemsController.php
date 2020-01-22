@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class CustomerItemsController extends Controller
 {
+    /**
+     * Rögzíti a megadottak alapján a termékeket
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store(Request $request) {
         $validated_data = $request->validate([
             'customer_id' => 'required',
@@ -31,11 +37,31 @@ class CustomerItemsController extends Controller
         ]);
     }
 
+    /**
+     * Segéd funckió ami betölti az új rögzítéshez szükséges inputokat.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function loadNew(Request $request) {
         $items = Item::all();
         return view('inc.customer_item')->with([
             'items' => $items,
             'count' => $request->input('count'),
+        ]);
+    }
+
+    /**
+     * Kitörli a megadott ID alapján a hozzá tartozó rögzített vásárlást.
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function delete($id) {
+        CustomerItems::destroy($id);
+
+        return redirect(url()->previous())->with([
+            'success' => 'Rögzített vásárlás sikeresen törölve!',
         ]);
     }
 }
