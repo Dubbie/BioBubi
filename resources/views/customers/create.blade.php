@@ -107,6 +107,25 @@
                 $('.customer-chooser-input').on('change', (e) => {
                     handleResellerSwitch();
                 });
+
+                $('#city').on('keyup', (e) => {
+                    const query = e.currentTarget.value;
+
+                    if (query.length >= 3) {
+                        searchByCity(query);
+                    }
+                });
+            }
+
+            function searchByCity(query) {
+                fetch('https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json?apiKey=C5r9d8VTg4gOFb56KZZIUg-LKcy4RwMRyeisBLh4F6c&query=' + query + '&country=HUN&beginHighlight=<b>&endHighlight=</b>')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const postalCode = data['suggestions'][0]['address']['postalCode'];
+                        if (postalCode) {
+                            document.getElementById('zip').value = postalCode;
+                        }
+                    });
             }
 
             function handleResellerSwitch() {
