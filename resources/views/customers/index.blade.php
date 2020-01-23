@@ -18,14 +18,15 @@
                 @foreach($alerts as $alert)
                     <div class="action-hover-only d-flex justify-content-between @if(last($alerts) != $alert) mb-2 @endif">
                         <div class="alert-details">
-                            <p class="mb-0" style="line-height: 1;">
-                                <span style="color: {{ $alert->user->color }}">{{ $alert->user->name }}</span>
-                                <span class="ml-2 font-weight-bold" data-toggle="tooltip"
-                                       data-placement="bottom"
-                                       title="{{ $alert->time->format('Y M d, H:i') }}">{{ $alert->getRemainingLabel() }}</span>
+                            <p style="color: {{ $alert->user->color }};line-height: 1;" class="font-weight-bold mb-0">
+                                {{ $alert->user->name }}
+                                <span class="ml-2 font-weight-normal" data-toggle="tooltip"
+                                      data-placement="bottom"
+                                      title="{{ $alert->time->translatedFormat('Y F d, H:i') }}">{!! $alert->getStatusBadge() !!}</span>
                             </p>
-                            <p class="h5 mt-1 mb-0">
-                                <a href="{{ action('CustomersController@show', $alert->customer) }}" class="text-decoration-none">{{ $alert->message }}</a>
+                            <p class="mt-1 mb-0">
+                                <a href="{{ action('CustomersController@show', $alert->customer) }}"
+                                   class="text-decoration-none text-muted">{{ $alert->message }}</a>
                             </p>
                         </div>
                         <div class="td-action alert-actions">
@@ -82,52 +83,84 @@
                     @include('inc.sidebar')
                 </div>
                 <div class="col-lg-9">
-                    <div class="card card-body border-0 shadow-sm">
-                        <table id="customers-table" class="table table-sm table-hover table-borderless mb-0">
-                            <thead class="">
-                            <tr>
-                                <th scope="col" class="tr-clickable" data-sort="string">Név</th>
-                                <th scope="col" class="tr-clickable" data-sort="string">Város</th>
-                                <th scope="col" class="tr-clickable" data-sort="int">Telefonszám</th>
-                                <th scope="col" class="tr-clickable" data-sort="string">Típus</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($customers as $customer)
-                                <tr class="tr-clickable action-hover-only text-nowrap"
-                                    data-redirect-to="{{ action('CustomersController@show', $customer) }}">
-                                    <td>{{ $customer->name }}</td>
-                                    <td>{{ $customer->address->city }}</td>
-                                    <td>{{ $customer->phone }}</td>
-                                    <td>{{ $customer->getResellerLabel() }}</td>
-                                    <td class="td-action text-right">
+                    {{-- Új --}}
+                    <div class="card card-body shadow-sm border-0 p-0">
+                        <h5 class="font-weight-bold p-3 mb-0">Találatok</h5>
+                        @foreach($customers as $customer)
+                            <div class="customer py-2 px-4 action-hover-only"
+                                 data-href="{{ action('CustomersController@show', $customer) }}">
+                                <div class="row no-gutters">
+                                    {{-- Ikonka --}}
+                                    <div class="col-md-auto pr-3">
+                                        @if(!$customer->is_reseller)
+                                            <div class="d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2"
+                                                 style="width: 32px; height: 32px;">
+                                            <span class="icon text-info-pastel">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                            </div>
+                                        @else
+                                            <div class="d-flex justify-content-center align-items-center bg-success-pastel rounded-circle mt-2"
+                                                 style="width: 32px; height: 32px;">
+                                            <span class="icon text-success-pastel">
+                                                <i class="fas fa-comments-dollar"></i>
+                                            </span>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    {{-- Név és Lakcím --}}
+                                    <div class="col">
+                                        <div class="customer-basics">
+                                            <p class="mb-0 font-weight-bold">{{ $customer->name }}
+                                                <small class="d-block">{{ $customer->address->getFormattedAddress() }}</small>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Telefonszám és E-mail --}}
+                                    <div class="col-md-3 text-right">
+                                        <p class="mb-0 mr-4">
+                                            <span>{{ $customer->phone }}</span>
+                                            <small class="d-block text-muted">{{ $customer->email }}</small>
+                                        </p>
+                                    </div>
+
+                                    {{-- Gombok --}}
+                                    <div class="col-md-auto text-right td-action">
                                         {{-- Szerkesztés --}}
                                         <a href="{{ action('CustomersController@edit', $customer) }}"
-                                           class="btn btn-sm btn-muted p-1" data-toggle="tooltip" data-placement="top" title="Megrendelő szerkesztése">
-                                        <span class="icon icon-sm">
-                                            <i class="fas fa-pen"></i>
-                                        </span>
+                                           class="btn btn-sm btn-muted p-1" data-toggle="tooltip" data-placement="top"
+                                           title="Megrendelő szerkesztése">
+                                            <span class="icon icon-sm">
+                                                <i class="fas fa-pen"></i>
+                                            </span>
                                         </a>
 
                                         {{-- Törlés --}}
                                         <form action="{{ action('CustomersController@delete', $customer) }}"
-                                              class="d-inline-block" method="POST" data-toggle="tooltip" data-placement="top" title="Megrendelő törlése">
+                                              class="d-inline-block" method="POST" data-toggle="tooltip"
+                                              data-placement="top" title="Megrendelő törlése">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
-                                            <span class="icon icon-sm">
-                                                <i class="fas fa-times"></i>
-                                            </span>
+                                                <span class="icon icon-sm">
+                                                    <i class="fas fa-times"></i>
+                                                </span>
                                             </button>
                                         </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        {{-- Paginátor --}}
+                        @if (count($customers->links()->elements[0]) > 1)
+                            <div class="pl-3 pt-3 border-top">
+                                {{ $customers->appends(request()->except('page'))->links() }}
+                            </div>
+                        @endif
                     </div>
-                    {{ $customers->appends(request()->except('page'))->links() }}
                 </div>
             </div>
         @else
@@ -169,11 +202,19 @@
             });
 
             // Kattintható sorok
-            $('.tr-clickable').on('click', (e) => {
-                if (e.currentTarget.dataset.redirectTo &&
+            // $('.tr-clickable').on('click', (e) => {
+            //     if (e.currentTarget.dataset.redirectTo &&
+            //         $(e.target).closest('.btn-del-customer').length === 0
+            //     ) {
+            //         window.location = e.currentTarget.dataset.redirectTo
+            //     }
+            // });
+
+            $('.customer').on('click', (e) => {
+                if (e.currentTarget.dataset.href &&
                     $(e.target).closest('.btn-del-customer').length === 0
                 ) {
-                    window.location = e.currentTarget.dataset.redirectTo
+                    window.location = e.currentTarget.dataset.href;
                 }
             });
 

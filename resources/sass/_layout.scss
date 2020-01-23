@@ -71,3 +71,27 @@ a.text-normal {
 .bg-muted {
   background-color: $light-grey-1 !important;
 }
+
+.bg-info-pastel {
+  background-color: $pastel-blue-lighter !important;
+}
+
+.text-info-pastel {
+  color: $pastel-blue !important;
+}
+
+.bg-danger-pastel {
+  background-color: $pastel-red-lighter !important;
+}
+
+.text-danger-pastel {
+  color: $pastel-red !important;
+}
+
+.bg-success-pastel {
+  background-color: $pastel-green-lighter !important;
+}
+
+.text-success-pastel {
+  color: $pastel-green !important;
+}

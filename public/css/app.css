@@ -11423,6 +11423,30 @@ a.text-normal:hover {
   background-color: #f0f7f7 !important;
 }
 
+.bg-info-pastel {
+  background-color: #e2f0ff !important;
+}
+
+.text-info-pastel {
+  color: #5b86c3 !important;
+}
+
+.bg-danger-pastel {
+  background-color: #fae3e2 !important;
+}
+
+.text-danger-pastel {
+  color: #ee5c60 !important;
+}
+
+.bg-success-pastel {
+  background-color: #e7f7eb !important;
+}
+
+.text-success-pastel {
+  color: #7fa986 !important;
+}
+
 .copyable {
   cursor: pointer;
 }
@@ -11472,6 +11496,16 @@ a.text-normal:hover {
 .customer-chooser-label {
   -webkit-transition: all 250ms ease-in-out;
   transition: all 250ms ease-in-out;
+}
+
+.customer:hover {
+  cursor: pointer;
+  background-color: #f5f9fa;
+}
+
+.customer-purchase:hover {
+  cursor: pointer;
+  background-color: #f5f9fa;
 }
 
 .btn {
@@ -11591,5 +11625,20 @@ a.text-normal:hover {
 
 .modal-content {
   border: 0;
+}
+
+.badge.badge-danger-pastel {
+  color: #ee5c60;
+  background-color: #fae3e2;
+}
+
+.badge.badge-info-pastel {
+  color: #5b86c3;
+  background-color: #e2f0ff;
+}
+
+.badge.badge-success-pastel {
+  color: #7fa986;
+  background-color: #e7f7eb;
 }
 
