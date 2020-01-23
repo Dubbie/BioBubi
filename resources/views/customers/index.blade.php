@@ -89,19 +89,17 @@
                                 <th scope="col" class="tr-clickable" data-sort="string">Név</th>
                                 <th scope="col" class="tr-clickable" data-sort="string">Város</th>
                                 <th scope="col" class="tr-clickable" data-sort="int">Telefonszám</th>
-                                <th scope="col" class="tr-clickable" data-sort="string">E-mail</th>
                                 <th scope="col" class="tr-clickable" data-sort="string">Típus</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($customers as $customer)
-                                <tr class="tr-clickable action-hover-only"
+                                <tr class="tr-clickable action-hover-only text-nowrap"
                                     data-redirect-to="{{ action('CustomersController@show', $customer) }}">
                                     <td>{{ $customer->name }}</td>
                                     <td>{{ $customer->address->city }}</td>
                                     <td>{{ $customer->phone }}</td>
-                                    <td>{{ $customer->email }}</td>
                                     <td>{{ $customer->getResellerLabel() }}</td>
                                     <td class="td-action text-right">
                                         {{-- Szerkesztés --}}
