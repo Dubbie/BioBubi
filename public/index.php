@@ -9,8 +9,6 @@
 
 define('LARAVEL_START', microtime(true));
 
-// symlink('/home/semmisze/crm.semmiszemet.hu/crm/storage/app/public', '/home/semmisze/crm.semmiszemet.hu/public_html/storage');
-
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -23,9 +21,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-$bootstrap = $_SERVER["REMOTE_ADDR"] != "127.0.0.1" ? '/crm' : '';
-
-require __DIR__ . '/..' . $bootstrap . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +35,7 @@ require __DIR__ . '/..' . $bootstrap . '/vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__ . '/..' . $bootstrap . '/bootstrap/app.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
 /*
 |--------------------------------------------------------------------------
