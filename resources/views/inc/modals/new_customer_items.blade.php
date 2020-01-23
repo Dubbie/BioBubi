@@ -16,7 +16,7 @@
                     <div id="customer-item-container">
                         <div class="form-row align-items-end">
                             <div class="col">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     <label for="item_id_1">Termék</label>
                                     <select name="item_id[]" id="item_id_1" class="custom-select customer-item-id">
                                         <option value="" disabled selected hidden>Válassz terméket...</option>
@@ -28,13 +28,13 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     <label for="date_1">Időpont</label>
                                     <input type='text' class="form-control" id="date_1" name="date[]">
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     <label for="price_1">Ár</label>
                                     <div class="input-group mb-0">
                                         <input type="tel" id="price_1" name="price[]"
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     <label for="quantity_1">Mennyiség</label>
                                     <div class="input-group mb-0">
                                         <input type="tel" id="quantity_1" name="quantity[]"
@@ -64,19 +64,29 @@
                                 {{-- Action gombok mennek ide --}}
                             </div>
                         </div>
+                        <div class="form-group mb-0">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="completed[]" id="completed_1">
+                                <label class="custom-control-label" for="completed_1">Teljesítve</label>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Összegzés --}}
                     <div class="row align-items-end">
-                        <div class="col">
+                        <div class="col d-flex align-items-center">
                             <button id="newCustomerItem" type="button"
                                     class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Rögzítendő termék
                                 hozzáadása
                             </button>
+                            <div id="spinner" class="spinner-grow spinner-grow-sm text-primary ml-2" role="status" style="display:none;">
+                                <span class="sr-only">Loading...</span>
+                            </div>
                         </div>
                         <div class="col text-right">
                             <p class="h2 font-weight-light mb-0">
-                                <span id="sum">0</span>
+                                <small class="mr-2" style="font-size: 16px">Összesen: </small>
+                                <span id="sum" class="font-weight-bold">0</span>
                                 <small class="font-weight-bold" style="font-size: 16px">Ft</small>
                             </p>
                         </div>

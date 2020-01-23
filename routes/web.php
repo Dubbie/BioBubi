@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/termekek/megrendelo/', 'CustomerItemsController@store');
     Route::post('/termekek/megrendelo/betoltes', 'CustomerItemsController@loadNew');
     Route::delete('/termekek/megrendelo/{id}', 'CustomerItemsController@delete');
+    Route::post('/termekek/megrendelo/{id}/teljesit', 'CustomerItemsController@complete');
 
     // Termék kontrolleres
     Route::get('/termekek', 'ItemsController@index');

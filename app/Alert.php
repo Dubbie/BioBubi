@@ -40,7 +40,7 @@ class Alert extends Model
 
         if(!$this->completed) {
             if ($this->time->diffInHours($now, false) < 0) {
-                $label = "Határidő: " . $this->time->longAbsoluteDiffForHumans($now);
+                $label = "Hátramaradt idő: " . $this->time->longAbsoluteDiffForHumans($now);
             } else {
                 $label = "Határidőn túl";
             }

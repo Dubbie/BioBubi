@@ -44,36 +44,65 @@
                                 @foreach($customer->purchases as $purchase)
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="h5 mb-0 item-name font-weight-light">
-                                            <span class="font-weight-bold">{{ $purchase->quantity }}db</span>
-                                            <span>{{ $purchase->getItemName() }}</span>
-                                            @if($purchase->date)
-                                                <small class="d-block text-small">{{ $purchase->date->format('Y M d, H:i') }}</small> @endif
+                                            <span>{{ $purchase->quantity }} × {{ $purchase->getItemName() }}</span>
+                                            @if($purchase->completed)
+                                                <small class="ml-2 text-success">Teljesítve</small>
+                                            @endif
+                                            <small class="d-block text-small">
+                                                @if($purchase->date)
+                                                    {{ $purchase->date->format('Y M d, H:i') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </small>
                                         </span>
-                                        <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
-                                            <small class="font-weight-bold">Ft</small>
-                                            <form class="d-inline-block has-tooltip"
-                                                  action="{{ action('CustomerItemsController@delete', $purchase) }}"
-                                                  method="POST"
-                                                  data-toggle="tooltip" data-placement="top"
-                                                  title="Rögzített vásárlás törlése">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
-                                                    <span class="icon">
-                                                        <i class="fas fa-times"></i>
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </span>
+
+                                        <div class="purchase-action">
+                                            <div class="action d-inline-flex align-items-start mr-2">
+                                                {{--  Teljesítés --}}
+                                                @if(!$purchase->completed)
+                                                    <form class="d-inline-flex has-tooltip"
+                                                          action="{{ action('CustomerItemsController@complete', $purchase) }}"
+                                                          method="POST"
+                                                          data-toggle="tooltip" data-placement="top"
+                                                          title="Rögzített vásárlás teljesítése">
+                                                        @csrf
+                                                        <button class="btn-complete-purchase btn btn-muted btn-sm px-1 py-0">
+                                                        <span class="icon">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
+                                                {{-- Törlés --}}
+                                                <form class="d-inline-flex has-tooltip"
+                                                      action="{{ action('CustomerItemsController@delete', $purchase) }}"
+                                                      method="POST"
+                                                      data-toggle="tooltip" data-placement="top"
+                                                      title="Rögzített vásárlás törlése">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
+                                                        <span class="icon">
+                                                            <i class="fas fa-times"></i>
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
+                                                <small class="font-weight-bold">Ft</small>
+                                            </span>
+                                        </div>
                                     </div>
                                 @endforeach
 
                                 {{-- Összegző --}}
                                 <div class="d-flex justify-content-between align-items-baseline border-top mt-2 pt-2">
-                                    <span class="mr-2">Összesen: </span>
-                                    <h3 class="font-weight-bold">{{ number_format($total, 0, '.', ' ') }}
+                                    <h4 class="font-weight-bold">Összesen: </h4>
+                                    <h4 class="font-weight-bold">{{ number_format($total, 0, '.', ' ') }}
                                         <small class="font-weight-bold">Ft</small>
-                                    </h3>
+                                    </h4>
                                 </div>
 
                                 {{-- További vásárlások rögzítése --}}
@@ -298,6 +327,7 @@
             let elContainer = document.getElementById('customer-item-container');
             const elSum = document.getElementById('sum');
             const btnNewItem = document.getElementById('newCustomerItem');
+            const spinner = document.getElementById('spinner');
             let customerItemCounter = 1;
 
             /**
@@ -327,11 +357,15 @@
                     }, 2500);
                 });
 
+                // Egyebek
                 bindComments();
                 bindCustomerItems();
                 bindAlerts();
             }
 
+            /**
+             * Bebindeli a szükséges eseményeket a kommenthez
+             */
             function bindComments() {
                 // Megjegyzés szerkesztése
                 $('.btn-edit-comment').on('click', (e) => {
@@ -347,6 +381,9 @@
                 });
             }
 
+            /**
+             * Bebindeli a szükséges eseményeket a megrendelőhöz
+             */
             function bindCustomerItems() {
                 // Bindeljük be, ha a select változik akkor mi történjen
                 $(document).on('change.counter', '.customer-item-id', (e) => {
@@ -396,6 +433,9 @@
                 });
             }
 
+            /**
+             * Bebindeli a szükséges eseményeket a teendőkhöz
+             */
             function bindAlerts() {
                 // Új teendő
                 $('.btn-new-alert').on('click', (e) => {
@@ -424,6 +464,10 @@
             function addNewItemInputs() {
                 customerItemCounter++;
 
+                btnNewItem.classList.add('disabled');
+                btnNewItem.disabled = true;
+                $(spinner).show();
+
                 fetch('{{ action('CustomerItemsController@loadNew') }}', {
                     method: 'POST',
                     headers: {
@@ -438,6 +482,12 @@
 
                     // Inicializáljuk az új dátum időpont választót
                     initDateTimePicker('date_' + customerItemCounter);
+                    enableTooltips();
+                }).finally(() => {
+                    btnNewItem.classList.remove('disabled');
+                    btnNewItem.disabled = false;
+
+                    $(spinner).hide();
                 });
             }
 
@@ -500,6 +550,18 @@
             }
 
             /**
+             * Bekapcsolja a tooltipeket
+             */
+            function enableTooltips() {
+                $('.copyable').tooltip({
+                    trigger: 'manual'
+                });
+                $('.has-tooltip').tooltip({
+                    trigger: 'hover'
+                });
+            }
+
+            /**
              * Konstruktor szerű
              */
             function init() {
@@ -507,12 +569,7 @@
                 updateSum();
 
                 // Tooltipes basz
-                $('.copyable').tooltip({
-                    trigger: 'manual'
-                });
-                $('.has-tooltip').tooltip({
-                    trigger: 'hover'
-                });
+                enableTooltips();
 
                 // Datetime picker
                 $.datetimepicker.setLocale('hu');

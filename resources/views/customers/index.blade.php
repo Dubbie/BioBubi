@@ -19,15 +19,12 @@
                         <div class="alert-details">
                             <p class="mb-0" style="line-height: 1;">
                                 <span style="color: {{ $alert->user->color }}">{{ $alert->user->name }}</span>
-                                <span class="text-muted mx-2">•</span>
-                                <span class="font-weight-bold" data-toggle="tooltip"
+                                <span class="ml-2 font-weight-bold" data-toggle="tooltip"
                                        data-placement="bottom"
                                        title="{{ $alert->time->format('Y M d, H:i') }}">{{ $alert->getRemainingLabel() }}</span>
                             </p>
-                            <p class="mb-0" style="line-height: 1;">
-                                <span class="msg">{{ $alert->message }}</span>
-                                <a href="{{ action('CustomersController@show', $alert->customer) }}"
-                                   class="btn btn-sm btn-link text-decoration-none">{{ $alert->customer->name }}</a>
+                            <p class="h5 mt-1 mb-0">
+                                <a href="{{ action('CustomersController@show', $alert->customer) }}" class="text-decoration-none">{{ $alert->message }}</a>
                             </p>
                         </div>
                         <div class="td-action alert-actions">
