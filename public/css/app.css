@@ -11506,6 +11506,14 @@ body {
   color: #5e77a2 !important;
 }
 
+.alert-completed .alert-details {
+  opacity: 0.25;
+}
+
+.alert-overdue {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
 .toast {
   position: absolute;
   top: 5rem;

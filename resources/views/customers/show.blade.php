@@ -49,16 +49,18 @@
                                             @if($purchase->date)
                                                 <small class="d-block text-small">{{ $purchase->date->format('Y M d, H:i') }}</small> @endif
                                         </span>
-                                    <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
-                                        <small class="font-weight-bold">Ft</small>
-                                            <form class="d-inline-block"
+                                        <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
+                                            <small class="font-weight-bold">Ft</small>
+                                            <form class="d-inline-block has-tooltip"
                                                   action="{{ action('CustomerItemsController@delete', $purchase) }}"
-                                                  method="POST">
+                                                  method="POST"
+                                                  data-toggle="tooltip" data-placement="top"
+                                                  title="Rögzített vásárlás törlése">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
                                                     <span class="icon">
-                                                        <i class="far fa-times-circle"></i>
+                                                        <i class="fas fa-times"></i>
                                                     </span>
                                                 </button>
                                             </form>
@@ -115,8 +117,10 @@
                     @endif
                 </div>
 
+                {{-- Megjegyzések --}}
                 <div class="row mt-4">
                     <div class="col-12">
+
                         <h3 class="font-weight-bold mb-0">Megjegyzések</h3>
                         @if(count($customer->comments) > 0)
                             <div class="comments-container mt-2">
@@ -125,25 +129,46 @@
                                         <div class="comment-header d-flex justify-content-between align-items-start">
                                             <p class="h5 font-weight-bold mb-0">{{ $comment->author->name }}</p>
                                             <div class="action">
-                                                @if($comment->user_id == Auth::id())
-                                                    {{-- Szerkesztés gomb --}}
-                                                    <button type="button" class="btn btn-edit-comment btn-sm btn-muted px-1 py-0"
-                                                            data-toggle="modal"
+                                                {{-- Új értesítő beállítása --}}
+                                                <span class="has-tooltip" data-toggle="tooltip" data-placement="top"
+                                                      title="Új teendő hozzáadása">
+                                                    <button class="btn btn-new-alert btn-sm btn-muted px-1 py-0"
                                                             data-comment-id="{{ $comment->id }}"
-                                                            data-comment-message="{{ $comment->message }}"
-                                                            data-target="#editCommentModal">
+                                                            data-toggle="modal"
+                                                            data-target="#newAlertModal">
                                                         <span class="icon">
-                                                            <i class="fas fa-pen"></i>
+                                                            <i class="fas fa-bell"></i>
                                                         </span>
                                                     </button>
+                                                </span>
+
+                                                @if($comment->user_id == Auth::id())
+                                                    {{-- Szerkesztés gomb --}}
+                                                    <span class="has-tooltip" data-toggle="tooltip" data-placement="top"
+                                                          title="Megjegyzés szerkesztése">
+                                                        <button type="button"
+                                                                class="btn btn-edit-comment btn-sm btn-muted px-1 py-0"
+                                                                data-toggle="modal"
+                                                                data-comment-id="{{ $comment->id }}"
+                                                                data-comment-message="{{ $comment->message }}"
+                                                                data-target="#editCommentModal">
+                                                            <span class="icon">
+                                                                <i class="fas fa-pen"></i>
+                                                            </span>
+                                                        </button>
+                                                    </span>
+
 
                                                     {{-- Törlés gomb--}}
-                                                    <form action="{{ action('CommentsController@delete', $comment) }}" class="d-inline-block mr-2" method="POST">
+                                                    <form action="{{ action('CommentsController@delete', $comment) }}"
+                                                          class="d-inline-block has-tooltip mr-2" method="POST" data-toggle="tooltip" data-placement="top"
+                                                          title="Megjegyzés törlése">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-del-comment btn-muted px-1 py-0">
+                                                        <button type="submit"
+                                                                class="btn btn-del-comment btn-muted px-1 py-0">
                                                             <span class="icon">
-                                                                <i class="far fa-times-circle"></i>
+                                                                <i class="fas fa-times"></i>
                                                             </span>
                                                         </button>
                                                     </form>
@@ -153,6 +178,80 @@
                                         </div>
                                         <div class="lead comment-message">{{ $comment->message }}</div>
                                     </div>
+
+                                    {{-- Teendők ha vannak --}}
+                                    @if(count($comment->alerts) > 0)
+                                        <div class="mb-4">
+                                            @foreach($comment->alerts as $alert)
+                                                <div class="d-flex justify-content-between action-hover-only py-2 px-4
+                                                    @if($alert->completed) alert-completed
+                                                    @elseif($alert->isOverdue()) alert-overdue
+                                                    @endif">
+                                                    {{-- Teendő leírás --}}
+                                                    <div class="alert-details">
+                                                        <p class="mb-0">
+                                                            <small class="font-weight-bold"
+                                                                   style="line-height: 1; color: {{ $alert->user->color }}">{{ $alert->user->name }}</small>
+                                                            <small class="has-tooltip font-weight-bold ml-2"
+                                                                   data-toggle="tooltip"
+                                                                   data-placement="right"
+                                                                   title="{{ $alert->time->format('Y M d, H:i') }}">{{ $alert->getRemainingLabel() }}</small>
+                                                            <span class="d-block font-weight-bold"
+                                                                  style="line-height: 1">{{ $alert->message }}</span>
+                                                        </p>
+                                                    </div>
+
+                                                    {{-- Teendő akciók --}}
+                                                    <div class="td-action alert-actions">
+                                                        {{-- Teljesítés --}}
+                                                        @if(!$alert->completed)
+                                                            <form action="{{ action('AlertsController@complete', $alert) }}"
+                                                                  class="d-inline-block has-tooltip"
+                                                                  data-toggle="tooltip" data-placement="top"
+                                                                  method="POST"
+                                                                  title="Teendő teljesítése">
+                                                                @csrf
+                                                                <button class="btn btn-complete-alert btn-sm btn-link btn-muted px-1 py-0">
+                                                                <span class="icon">
+                                                                    <i class="fas fa-check"></i>
+                                                                </span>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                        {{-- Módosítás --}}
+                                                        <span class="has-tooltip" data-toggle="tooltip"
+                                                              data-placement="top"
+                                                              title="Teendő szerkesztése">
+                                                            <button type="button"
+                                                                    class="btn btn-edit-alert btn-sm btn-link btn-muted px-1 py-0"
+                                                                    data-toggle="modal"
+                                                                    data-target="#editAlertModal"
+                                                                    data-alert-id="{{ $alert->id }}"
+                                                                    data-message="{{ $alert->message }}"
+                                                                    data-time="{{ $alert->time->format('Y/m/d H:i') }}">
+                                                                <span class="icon">
+                                                                    <i class="fas fa-pen"></i>
+                                                                </span>
+                                                            </button>
+                                                        </span>
+                                                        {{-- Törlés --}}
+                                                        <form action="{{ action('AlertsController@delete', $alert) }}"
+                                                              class="d-inline-block has-tooltip"
+                                                              method="POST" data-toggle="tooltip" data-placement="top"
+                                                              title="Teendő törlése">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-del-alert btn-sm btn-link btn-muted px-1 py-0">
+                                                                <span class="icon">
+                                                                    <i class="fas fa-times"></i>
+                                                                </span>
+                                                            </button>
+                                                        </form>
+                                                    </div> {{-- Módósítás, Törlés, Teljesítés vége --}}
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         @else
@@ -180,139 +279,17 @@
         </div>
     </div>
 
-    {{-- Új termék hozzáfűzése a megrendelőhöz modal --}}
-    <div class="modal fade" id="newCustomerItemsModal" tabindex="-1" role="dialog"
-         aria-labelledby="newCustomerItemsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <form action="{{ action('CustomerItemsController@store') }}" id="item-chooser" method="POST"
-                      autocomplete="off">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newCustomerItemsModalLabel">Rögzítendő termékek</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @csrf
-                        <input type="hidden" name="customer_id" value="{{ $customer->id }}">
-                        <div id="customer-item-container">
-                            <div class="form-row align-items-end">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="item_id_1">Termék</label>
-                                        <select name="item_id[]" id="item_id_1" class="custom-select customer-item-id">
-                                            <option value="" disabled selected hidden>Válassz terméket...</option>
-                                            @foreach($items as $item)
-                                                <option value="{{ $item->id }}"
-                                                        data-price="{{ $item->price }}">{{ $item->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="date_1">Időpont</label>
-                                        <input type='text' class="form-control" id="date_1" name="date[]">
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="price_1">Ár</label>
-                                        <div class="input-group mb-0">
-                                            <input type="tel" id="price_1" name="price[]"
-                                                   class="form-control customer-item-price"
-                                                   aria-label="Termék ára" aria-describedby="basic-addon2" required>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="basic-addon2">Ft</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="quantity_1">Mennyiség</label>
-                                        <div class="input-group mb-0">
-                                            <input type="tel" id="quantity_1" name="quantity[]"
-                                                   class="form-control customer-item-quantity"
-                                                   aria-label="Termék ára" aria-describedby="basic-addon2" min="1"
-                                                   required>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="basic-addon2">db</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    {{-- Action gombok mennek ide --}}
-                                </div>
-                            </div>
-                        </div>
+    {{-- Új teendő hozzáadása modul --}}
+    @include('inc.modals.new_alert')
 
-                        {{-- Összegzés --}}
-                        <div class="row align-items-end">
-                            <div class="col">
-                                <button id="newCustomerItem" type="button"
-                                        class="btn btn-link btn-sm px-0 pb-0 text-decoration-none">Rögzítendő termék
-                                    hozzáadása
-                                </button>
-                            </div>
-                            <div class="col text-right">
-                                <p class="h2 font-weight-light mb-0">
-                                    <span id="sum">0</span>
-                                    <small class="font-weight-bold" style="font-size: 16px">Ft</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-end">
-                        <div>
-                            <a href="{{ action('ItemsController@create') }}"
-                               class="btn btn-sm btn-link text-muted pl-0">Hiányzó termék hozzáadása</a>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás
-                            </button>
-                            <button type="submit" class="btn btn-sm btn-success">Termékek rögzítése</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {{-- Új termék hozzáfűzése a megrendelőhöz modal --}}
+    @include('inc.modals.new_customer_items')
 
     {{-- Megjegyzés szerkesztés --}}
-    <div class="modal fade" id="editCommentModal" tabindex="-1" role="dialog"
-         aria-labelledby="editCommentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <form action="{{ action('CommentsController@update') }}" method="POST"
-                      autocomplete="off">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" id="edit_comment_id" name="edit_comment_id" value="">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editCommentModalLabel">Megjegyzés szerkesztése</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="edit_message">Üzenet</label>
-                            <textarea name="edit_message" id="edit_message" class="form-control" cols="30"
-                                      rows="10"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer text-right">
-                        <button type="button" class="btn btn-sm btn-link text-muted" data-dismiss="modal">Bezárás
-                        </button>
-                        <button type="submit" class="btn btn-sm btn-success">Megjegyzés frissítése</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('inc.modals.edit_comment')
+
+    {{-- Megjegyzés szerkesztés --}}
+    @include('inc.modals.edit_alert')
 @endsection
 
 @section('custom-scripts')
@@ -327,11 +304,50 @@
              * Események bindelése
              */
             function bindAllElements() {
+                // Beküldéskor spinner
+                $('form').on('submit', (e) => {
+                    e.stopPropagation();
+                    const submitBtn = $(e.currentTarget).find('button[type=submit]');
+                    submitBtn.prop('disabled', true);
+                    submitBtn.addClass('disabled');
+                    submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                });
+
+                // Másolás
+                $('.copyable').on('click', (e) => {
+                    copyToClipboard(e.target.innerText);
+                    $(e.target).tooltip('enable');
+                    $(e.target).tooltip('show');
+                    console.log('showing tooltip');
+
+                    window.setTimeout(() => {
+                        $(e.target).tooltip('hide');
+                        $(e.target).tooltip('disable');
+                        console.log('hiding tooltip');
+                    }, 2500);
+                });
+
+                bindComments();
+                bindCustomerItems();
+                bindAlerts();
+            }
+
+            function bindComments() {
+                // Megjegyzés szerkesztése
                 $('.btn-edit-comment').on('click', (e) => {
                     document.getElementById('edit_comment_id').value = e.currentTarget.dataset.commentId;
                     document.getElementById('edit_message').value = e.currentTarget.dataset.commentMessage;
                 });
 
+                // Megjegyzés törlés
+                $('.btn-del-comment').on('click', (e) => {
+                    if (!confirm('Biztosan szeretnéd a kommentet törölni? Ez a folyamat nem visszafordítható.')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            function bindCustomerItems() {
                 // Bindeljük be, ha a select változik akkor mi történjen
                 $(document).on('change.counter', '.customer-item-id', (e) => {
                     const selectItem = e.target;
@@ -378,35 +394,27 @@
                         e.preventDefault();
                     }
                 });
+            }
 
-                // Beküldéskor spinner
-                $('form').on('submit', (e) => {
-                    e.stopPropagation();
-                    const submitBtn = $(e.currentTarget).find('button[type=submit]');
-                    submitBtn.prop('disabled', true);
-                    submitBtn.addClass('disabled');
-                    submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+            function bindAlerts() {
+                // Új teendő
+                $('.btn-new-alert').on('click', (e) => {
+                    document.getElementById('new_alert_comment_id').value = e.currentTarget.dataset.commentId;
                 });
 
-                // Másolás
-                $('.copyable').on('click', (e) => {
-                    copyToClipboard(e.target.innerText);
-                    $(e.target).tooltip('enable');
-                    $(e.target).tooltip('show');
-                    console.log('showing tooltip');
-
-                    window.setTimeout(() => {
-                        $(e.target).tooltip('hide');
-                        $(e.target).tooltip('disable');
-                        console.log('hiding tooltip');
-                    }, 2500);
-                });
-
-                // Megjegyzés törlés
-                $('.btn-del-comment').on('click', (e) => {
-                    if (!confirm('Biztosan szeretnéd a kommentet törölni? Ez a folyamat nem visszafordítható.')) {
+                // Teendő törlési biztonsági
+                $('.btn-del-alert').on('click', (e) => {
+                    if (!confirm('Biztosan törölni szeretnéd a teendőt? Ez a folyamat nem visszafordítható!')) {
                         e.preventDefault();
                     }
+                });
+
+                // Teendő módosítása gomb
+                $('.btn-edit-alert').on('click', (e) => {
+                    const tgt = e.currentTarget;
+                    document.getElementById('edit_alert_id').value = tgt.dataset.alertId;
+                    document.getElementById('edit_alert_message').value = tgt.dataset.message;
+                    document.getElementById('edit_alert_time').value = tgt.dataset.time;
                 });
             }
 
@@ -499,13 +507,20 @@
                 updateSum();
 
                 // Tooltipes basz
-                $('.tooltip').tooltip({
+                $('.copyable').tooltip({
                     trigger: 'manual'
+                });
+                $('.has-tooltip').tooltip({
+                    trigger: 'hover'
                 });
 
                 // Datetime picker
                 $.datetimepicker.setLocale('hu');
                 initDateTimePicker('date_1');
+
+                // Teendős datetime picker
+                initDateTimePicker('new_alert_time');
+                initDateTimePicker('edit_alert_time');
             }
 
             init();

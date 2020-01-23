@@ -7,3 +7,11 @@
     color: #5e77a2 !important;
   }
 }
+
+.alert-completed .alert-details {
+  opacity: 0.25;
+}
+
+.alert-overdue {
+  background-color: transparentize(red, 0.8);
+}

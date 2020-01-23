@@ -10,48 +10,78 @@
             </div>
         </div>
 
+        {{-- Esedékes teendők --}}
+        <div class="card card-body border-0 shadow-sm mb-4">
+            <h5 class="font-weight-bold mb-4">Esedékes teendők</h5>
+            @if(count($alerts) > 0)
+                @foreach($alerts as $alert)
+                    <div class="action-hover-only d-flex justify-content-between @if(last($alerts) != $alert) mb-2 @endif">
+                        <div class="alert-details">
+                            <p class="mb-0" style="line-height: 1;">
+                                <span style="color: {{ $alert->user->color }}">{{ $alert->user->name }}</span>
+                                <span class="text-muted mx-2">•</span>
+                                <span class="font-weight-bold" data-toggle="tooltip"
+                                       data-placement="bottom"
+                                       title="{{ $alert->time->format('Y M d, H:i') }}">{{ $alert->getRemainingLabel() }}</span>
+                            </p>
+                            <p class="mb-0" style="line-height: 1;">
+                                <span class="msg">{{ $alert->message }}</span>
+                                <a href="{{ action('CustomersController@show', $alert->customer) }}"
+                                   class="btn btn-sm btn-link text-decoration-none">{{ $alert->customer->name }}</a>
+                            </p>
+                        </div>
+                        <div class="td-action alert-actions">
+                            {{-- Teljesítés --}}
+                            <form action="{{ action('AlertsController@complete', $alert) }}" class="d-inline-block"
+                                  method="POST" data-toggle="tooltip" data-placement="top" title="Teendő teljesítése">
+                                @csrf
+                                <button class="btn btn-complete-alert btn-sm btn-muted px-1 py-0">
+                                    <span class="icon">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </button>
+                            </form>
+                            {{-- Módosítás --}}
+                            <span data-toggle="tooltip" data-placement="top" title="Teendő szerkesztése">
+                                <button type="button" class="btn btn-edit-alert btn-sm btn-muted px-1 py-0"
+                                        data-toggle="modal"
+                                        data-target="#editAlertModal"
+                                        data-alert-id="{{ $alert->id }}"
+                                        data-message="{{ $alert->message }}"
+                                        data-time="{{ $alert->time->format('Y/m/d H:i') }}">
+                                <span class="icon">
+                                    <i class="fas fa-pen"></i>
+                                </span>
+                            </button>
+                            </span>
+                            {{-- Törlés --}}
+                            <form action="{{ action('AlertsController@delete', $alert) }}" class="d-inline-block"
+                                  method="POST" data-toggle="tooltip" data-placement="top" title="Teendő törlése">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-del-alert btn-sm btn-muted px-1 py-0">
+                                    <span class="icon">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </button>
+                            </form>
+                        </div> {{-- Módósítás, Törlés, Teljesítés vége --}}
+                    </div>
+                @endforeach
+            @else
+                <div class="d-flex align-items-center">
+                    <img src="https://img.icons8.com/color/48/000000/checked--v1.png" class="d-inline-block mr-2"
+                         style="width: 48px; height: 48px;">
+                    <p class="lead mb-0">Nincsenek esedékes teendők.</p>
+                </div>
+            @endif
+        </div>
+
         {{-- Megrendelők --}}
         @if(count($customers) > 0)
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="card card-body border-0 shadow">
-                        <form id="form-filter" action="{{ action('CustomersController@index') }}" method="GET">
-                            <p class="mb-0">
-                                <small class="font-weight-bold">Szűrők</small>
-                            </p>
-
-                            <div class="form-group">
-                                <label for="filter-name">Név tartalmzza</label>
-                                <input type="text" id="filter-name" name="filter-name"
-                                       class="form-control form-control-sm" value="{{ $filter['name'] ?? '' }}">
-                            </div>
-
-                            <p class="mb-0">Város</p>
-                            <div class="filter overflow-auto mb-4">
-                                @foreach($cities as $city)
-                                    <div class="form-group mb-0">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input filter-city"
-                                                   name="filter-city[]"
-                                                   id="filter-city-{{ \Illuminate\Support\Str::slug($city['city']) }}"
-                                                   value="{{ $city['city'] }}"
-                                                   @if(isset($city['checked'])) checked @endif>
-                                            <label class="custom-control-label"
-                                                   for="filter-city-{{ \Illuminate\Support\Str::slug($city['city']) }}">{{ $city['city'] }}
-                                                <span class="text-muted">{{ $city['total'] }}</span></label>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            <div class="form-group mb-0 d-flex justify-content-between">
-                                <button type="button" id="btn-reset-filter-form"
-                                        class="btn btn-sm btn-link text-secondary px-0">Visszaállít
-                                </button>
-                                <button type="submit" class="btn btn-sm btn-primary">Szűrés</button>
-                            </div>
-                        </form>
-                    </div>
+                    @include('inc.sidebar')
                 </div>
                 <div class="col-lg-9">
                     <table id="customers-table" class="table table-sm table-hover table-borderless">
@@ -75,20 +105,25 @@
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->getResellerLabel() }}</td>
                                 <td class="td-action text-right">
-                                    <a href="{{ action('CustomersController@edit', $customer) }}" class="btn btn-sm btn-muted p-1">
+                                    {{-- Szerkesztés --}}
+                                    <a href="{{ action('CustomersController@edit', $customer) }}"
+                                       class="btn btn-sm btn-muted p-1" data-toggle="tooltip" data-placement="top" title="Megrendelő szerkesztése">
                                         <span class="icon">
                                             <i class="fas fa-pen"></i>
                                         </span>
                                     </a>
-                                   <form action="{{ action('CustomersController@delete', $customer) }}" class="d-inline-block" method="POST">
-                                       @csrf
-                                       @method('DELETE')
-                                       <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
+
+                                    {{-- Törlés --}}
+                                    <form action="{{ action('CustomersController@delete', $customer) }}"
+                                          class="d-inline-block" method="POST" data-toggle="tooltip" data-placement="top" title="Megrendelő törlése">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
                                             <span class="icon">
-                                                <i class="far fa-times-circle"></i>
+                                                <i class="fas fa-times"></i>
                                             </span>
-                                       </button>
-                                   </form>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -104,6 +139,9 @@
                     hozzáadása</a></p>
         @endif
     </div>
+
+    {{-- Modalok --}}
+    @include('inc.modals.edit_alert')
 @endsection
 
 @section('custom-scripts')
@@ -111,9 +149,24 @@
         $(function () {
             const formFilter = $('#form-filter');
 
-            // Törlő gomb
+            // Megrendelő törlő gomb
             $('.btn-del-customer').on('click', (e) => {
                 if (!confirm('Biztosan törölni szeretnéd a terméket? Ez a folyamat nem visszafordítható.')) {
+                    e.preventDefault();
+                }
+            });
+
+            // Teendő módosítása gomb
+            $('.btn-edit-alert').on('click', (e) => {
+                const tgt = e.currentTarget;
+                document.getElementById('edit_alert_id').value = tgt.dataset.alertId;
+                document.getElementById('edit_alert_message').value = tgt.dataset.message;
+                document.getElementById('edit_alert_time').value = tgt.dataset.time;
+            });
+
+            // Teendő törlési biztonsági
+            $('.btn-del-alert').on('click', (e) => {
+                if (!confirm('Biztosan törölni szeretnéd a teendőt? Ez a folyamat nem visszafordítható!')) {
                     e.preventDefault();
                 }
             });
@@ -149,6 +202,17 @@
 
             // Stupid table
             $("#customers-table").stupidtable();
+
+            // Tooltipek
+            $('[data-toggle="tooltip"]').tooltip({
+                trigger: 'hover'
+            });
+
+            // Datetime picker teendőhöz
+            $.datetimepicker.setLocale('hu');
+            $('#edit_alert_time').datetimepicker({
+                dayOfWeekStart: 1,
+            });
         });
     </script>
 @endsection

@@ -48,6 +48,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::put('/termekek', 'ItemsController@update');
     Route::post('/termekek', 'ItemsController@store');
 
+    // Teendők kontrolleres
+    Route::post('/teendo/uj', 'AlertsController@store');
+    Route::put('/teendo/uj', 'AlertsController@update');
+    Route::post('/teendo/{id}/teljesit', 'AlertsController@complete');
+    Route::delete('/teendo/{id}', 'AlertsController@delete');
 
     Route::get('/home', 'HomeController@index')->name('home');
 });

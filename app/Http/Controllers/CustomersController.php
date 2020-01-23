@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Address;
+use App\Alert;
 use App\Customer;
 use App\Item;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -49,11 +53,24 @@ class CustomersController extends Controller
             }
         }
 
+        // Teendők
+        $alerts = Alert::where('completed', '=', 0)->get();
+        $filtered_alerts = [];
+        $now = Carbon::now();
+        foreach ($alerts as &$alert) {
+            if ($now->diffInHours($alert->time) <= 24) {
+
+                $alert->customer = $alert->comment->customer;
+                $filtered_alerts[] = $alert;
+            }
+        }
+
         $customers = $customers_query->orderBy('name', 'asc')->paginate(50);
         return view('customers.index')->with([
             'customers' => $customers,
             'cities' => $cities,
             'filter' => $filter,
+            'alerts' => $filtered_alerts,
         ]);
     }
 
