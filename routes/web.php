@@ -55,6 +55,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/teendo/{id}/teljesit', 'AlertsController@complete');
     Route::delete('/teendo/{id}', 'AlertsController@delete');
 
+    // Statisztika
+    Route::get('/statisztika', 'StatisticsController@index');
+
     Route::get('/home', 'HomeController@index')->name('home');
 });
 

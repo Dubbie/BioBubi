@@ -11447,6 +11447,14 @@ a.text-normal:hover {
   color: #7fa986 !important;
 }
 
+.bg-warning-pastel {
+  background-color: #fff6ec !important;
+}
+
+.text-warning-pastel {
+  color: #bc8668 !important;
+}
+
 .copyable {
   cursor: pointer;
 }

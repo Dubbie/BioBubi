@@ -6,10 +6,8 @@ use App\Address;
 use App\Alert;
 use App\Customer;
 use App\Item;
-use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -65,7 +63,9 @@ class CustomersController extends Controller
             }
         }
 
+        // Query lefuttatása
         $customers = $customers_query->orderBy('name', 'asc')->paginate(50);
+
         return view('customers.index')->with([
             'customers' => $customers,
             'cities' => $cities,

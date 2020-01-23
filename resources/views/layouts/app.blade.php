@@ -54,6 +54,15 @@
                             Termékek
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ action('StatisticsController@index') }}"
+                           class="nav-link {{ Request::is('statisztika*') ? 'active' : '' }}">
+                                <span class="icon mr-2">
+                                    <i class="far fa-chart-bar"></i>
+                                </span>
+                            Statisztika
+                        </a>
+                    </li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->
