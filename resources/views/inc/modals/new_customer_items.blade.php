@@ -66,7 +66,8 @@
                         </div>
                         <div class="form-group mb-0">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" name="completed[]" id="completed_1">
+                                <input type="hidden" class="checkbox-completed-hidden" name="completed[]" value="off">
+                                <input type="checkbox" class="checkbox-completed custom-control-input" name="completed[]" id="completed_1">
                                 <label class="custom-control-label" for="completed_1">Teljesítve</label>
                             </div>
                         </div>

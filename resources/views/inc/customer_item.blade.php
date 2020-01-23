@@ -52,7 +52,8 @@
 </div>
 <div class="form-group mb-0">
     <div class="custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" name="completed[]" id="completed_{{ $count }}">
+        <input type="hidden" class="checkbox-completed-hidden" name="completed[]" value="off">
+        <input type="checkbox" class="checkbox-completed custom-control-input" name="completed[]" id="completed_{{ $count }}">
         <label class="custom-control-label" for="completed_{{ $count }}">Teljesítve</label>
     </div>
 </div>

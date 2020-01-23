@@ -431,6 +431,15 @@
                         e.preventDefault();
                     }
                 });
+
+                // Form előtt a rejtett checkboxokat tiltsuk le
+                $('#item-chooser').on('submit', (e) => {
+                    $('.checkbox-completed').each((i, el) => {
+                        if (el.checked) {
+                            $(el).prev().attr('disabled', true);
+                        }
+                    });
+                });
             }
 
             /**
