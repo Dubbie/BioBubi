@@ -1,10 +1,5 @@
 .btn {
-  -webkit-border-radius: 25rem;
-  -moz-border-radius: 25rem;
-  border-radius: 25rem;
   font-weight: 700;
-  padding-left: 1rem;
-  padding-right: 1rem;
   transition: all 250ms ease-in-out;
 }
 
@@ -17,6 +12,32 @@
     background-color: #5b7095;
     border-color: #5b7095;
   }
+}
+
+.btn-teal {
+  background-color: $teal;
+  color: #ffffff;
+  
+  &:hover {
+    background-color: $teal-lighter;
+    color: #ffffff;
+  }
+}
+
+.btn-outline-teal {
+  background-color: transparent;
+  border-color: $teal;
+  color: $teal;
+
+  &:hover {
+    background-color: transparent;
+    border-color: $teal-lighter;
+    color: $teal-lighter;
+  }
+}
+
+.btn-toolbar .btn-sm {
+  padding: 0.5rem 0.75rem;
 }
 
 .btn-muted {

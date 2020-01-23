@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Termékek</h1>
             <div class="btn-toolbar">
-                <button type="button" class="btn btn-sm btn-outline-dark" data-toggle="modal"
+                <button type="button" class="btn btn-sm btn-teal shadow" data-toggle="modal"
                         data-target="#newItemModal">
                     Új termék
                 </button>
@@ -16,59 +16,66 @@
         @if(count($items) > 0)
             <div class="row">
                 <div class="col-md-8">
-                    <table class="table table-borderless">
-                        <thead>
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Név</th>
-                            <th scope="col" class="text-right">Ár</th>
-                            <th scope="col" class="text-right">Rögzítve</th>
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($items as $item)
-                            <tr class="action-hover-only"
-                                data-redirect-to="{{ action('ItemsController@show', $item) }}">
-                                <td class="text-muted">{{ $item->id }}</td>
-                                <td>{{ $item->name }}</td>
-                                <td class="text-right">{{ $item->getFormattedPrice(true) }}</td>
-                                <td class="text-right">
-                                    @php
-                                        $count = 0;
-
-                                        foreach($item->purchases as $purchase) {
-                                            $count += $purchase->quantity;
-                                        }
-                                    @endphp
-
-                                    {{ $count . 'db' }}
-                                </td>
-                                <td class="td-action text-right">
-                                    <button class="btn btn-edit-item btn-sm btn-muted px-1 py-0" data-toggle="modal"
-                                            data-target="#editItemModal"
-                                            data-item-id="{{ $item->id }}"
-                                            data-item-name="{{ $item->name }}"
-                                            data-item-price="{{ $item->price }}">
-                                        <span class="icon">
-                                            <i class="fas fa-pen"></i>
-                                        </span>
-                                    </button>
-                                    <form action="{{ action('ItemsController@delete', $item) }}" class="d-inline-block"
-                                          method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-del-item btn-sm btn-muted px-1 py-0">
-                                            <span class="icon">
-                                                <i class="far fa-times-circle"></i>
-                                            </span>
-                                        </button>
-                                    </form>
-                                </td>
+                    <div class="card card-body border-0 shadow-sm">
+                        <table class="table table-borderless mb-0">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Név</th>
+                                <th scope="col" class="text-right">Ár</th>
+                                <th scope="col" class="text-right">Rögzítve</th>
+                                <th scope="col"></th>
                             </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            @foreach($items as $item)
+                                <tr class="action-hover-only"
+                                    data-redirect-to="{{ action('ItemsController@show', $item) }}">
+                                    <td class="text-muted">{{ $item->id }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td class="text-right">{{ $item->getFormattedPrice(true) }}</td>
+                                    <td class="text-right">
+                                        @php
+                                            $count = 0;
+
+                                            foreach($item->purchases as $purchase) {
+                                                $count += $purchase->quantity;
+                                            }
+                                        @endphp
+
+                                        {{ $count . 'db' }}
+                                    </td>
+                                    <td class="td-action text-right">
+                                        {{-- Termék szerkesztése --}}
+                                        <span data-toggle="tooltip" data-placement="top" title="Termék szerkesztése">
+                                            <button class="btn btn-edit-item btn-sm btn-muted px-1 py-0" data-toggle="modal"
+                                                    data-target="#editItemModal"
+                                                    data-item-id="{{ $item->id }}"
+                                                    data-item-name="{{ $item->name }}"
+                                                    data-item-price="{{ $item->price }}">
+                                                <span class="icon icon-sm">
+                                                    <i class="fas fa-pen"></i>
+                                                </span>
+                                            </button>
+                                        </span>
+
+                                        {{-- Termék tölése --}}
+                                        <form action="{{ action('ItemsController@delete', $item) }}" class="d-inline-block"
+                                              method="POST" data-toggle="tooltip" data-placement="top" title="Termék törlése">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-del-item btn-sm btn-muted px-1 py-0">
+                                            <span class="icon icon-sm">
+                                                <i class="fas fa-times"></i>
+                                            </span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="alert alert-info">
@@ -213,6 +220,9 @@
                 submitBtn.addClass('disabled');
                 submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
             });
+
+            // Tooltipek
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 @endsection

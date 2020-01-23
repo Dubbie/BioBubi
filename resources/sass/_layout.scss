@@ -1,10 +1,8 @@
 body {
-  background-color: #ffffff;
-  color: #162642;
+  color: $text-base;
 }
 
 .navbar.navbar-light {
-  border-bottom: 1px solid #dfe0eb;
 }
 
 .tr-clickable {
@@ -23,26 +21,25 @@ body {
 }
 
 .navbar {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .navbar-light .navbar-nav {
   .nav-link {
-    color: #162642;
+    color: $text-lighter-1;
     font-weight: 700;
-    padding: 1rem;
-    border-bottom: 3px solid transparent;
-    transition: border-bottom-color 250ms ease-in-out;
+    border-radius: 25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
     &:hover {
-      color: #162642;
-      border-bottom-color: transparentize(#2560ce, 0.75);
+      color: $teal;
     }
 
     &.active {
-      color: #2560ce;
-      border-bottom: 3px solid #2560ce;
+      color: $teal;
+      background-color: $light-grey-1;
     }
   }
 }
@@ -54,4 +51,23 @@ body {
 
 .text-small {
   font-size: 0.8rem;
+}
+
+.text-teal {
+  color: $teal !important;
+}
+
+.text-normal {
+  color: $text-base !important;
+}
+
+a.text-normal {
+  color: $text-base !important;
+  &:hover {
+    color: $text-darker-1 !important;
+  }
+}
+
+.bg-muted {
+  background-color: $light-grey-1 !important;
 }

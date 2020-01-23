@@ -3,20 +3,20 @@
 @section('content')
     <div class="container">
         <div class="d-flex justify-content-between align-items-start">
-            <h1 class="font-weight-bold">Megrendelő szerkesztése</h1>
+            <div>
+                <h1 class="font-weight-bold mb-0">Megrendelő szerkesztése</h1>
+                <a href="{{ url()->previous() }}" class="btn btn-sm btn-link pl-0 text-decoration-none">Vissza</a>
+            </div>
         </div>
 
         @include('inc.messages')
 
         {{-- Új megrendelő --}}
-        <form action="{{ action('CustomersController@update', $customer) }}" method="POST">
+        <form action="{{ action('CustomersController@update', $customer) }}" method="POST" class="mt-4">
             @csrf
             @method('PUT')
             <div id="customer-basics">
                 <div class="form-row my-4">
-                    <div class="col-md-12">
-                        <p class="lead">Először válassz megrendelő típust.</p>
-                    </div>
                     <div class="col-md-6 text-center">
                         <div class="form-group">
                             <div class="form-check customer-chooser">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <div id="customer-details" style="display: none;">
+            <div id="customer-details" class="card card-body border-0 shadow-sm" style="display: none;">
                 <div class="form-row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -87,11 +87,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group d-flex justify-content-between">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-link pl-0 text-decoration-none">Vissza</a>
-                <button type="submit" class="btn btn-success">Hozzáadás</button>
+                <div class="form-group mb-0 text-right">
+                    <button type="submit" class="btn btn-success">Frissítés</button>
+                </div>
             </div>
         </form>
     </div>

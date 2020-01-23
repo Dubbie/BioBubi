@@ -5,10 +5,10 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Megrendelő részletek</h1>
             <div class="btn-toolbar">
-                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-primary mr-2">Új
+                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-teal mr-2">Új
                     megrendelő</a>
                 <a href="{{ action('CustomersController@edit', $customer) }}"
-                   class="btn btn-sm btn-primary">Megrendelő szerkesztése</a>
+                   class="btn btn-sm btn-teal shadow">Megrendelő szerkesztése</a>
             </div>
         </div>
 
@@ -21,28 +21,31 @@
                 <div class="row">
                     @if(!$customer->is_reseller)
                         <div class="col-md-6">
-                            <small class="d-block font-weight-bold">Név</small>
-                            <p id="customer-{{ $customer->id }}-name"
-                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
-                               title="Név kimásolva">{{ $customer->name }}</p>
-                            <small class="d-block font-weight-bold">Telefonszám</small>
-                            <p id="customer-{{ $customer->id }}-phone"
-                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
-                               title="Telefonszám kimásolva">{{ $customer->phone }}</p>
-                            <small class="d-block font-weight-bold">Lakcím</small>
-                            <p id="customer-{{ $customer->id }}-address"
-                               class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
-                               title="Lakcím kimásolva">{{ $customer->address->getFormattedAddress() }}</p>
-                            <small class="d-block font-weight-bold">E-mail</small>
-                            <p id="customer-{{ $customer->id }}-email"
-                               class="d-inline-block lead mb-0 copyable" data-toggle="tooltip" data-placement="right"
-                               title="E-mail kimásolva">{{ $customer->email }}</p>
+                            <div class="card card-body border-0 shadow-sm">
+                                <small class="d-block font-weight-bold">Név</small>
+                                <p id="customer-{{ $customer->id }}-name"
+                                   class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                                   title="Név kimásolva">{{ $customer->name }}</p>
+                                <small class="d-block font-weight-bold">Telefonszám</small>
+                                <p id="customer-{{ $customer->id }}-phone"
+                                   class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                                   title="Telefonszám kimásolva">{{ $customer->phone }}</p>
+                                <small class="d-block font-weight-bold">Lakcím</small>
+                                <p id="customer-{{ $customer->id }}-address"
+                                   class="d-inline-block lead mb-2 copyable" data-toggle="tooltip" data-placement="right"
+                                   title="Lakcím kimásolva">{{ $customer->address->getFormattedAddress() }}</p>
+                                <small class="d-block font-weight-bold">E-mail</small>
+                                <p id="customer-{{ $customer->id }}-email"
+                                   class="d-inline-block lead mb-0 copyable" data-toggle="tooltip" data-placement="right"
+                                   title="E-mail kimásolva">{{ $customer->email }}</p>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             @if(count($customer->purchases) > 0)
-                                <h5 class="font-weight-bold">Megvásárolt termékek:</h5>
-                                @foreach($customer->purchases as $purchase)
-                                    <div class="d-flex justify-content-between mb-2">
+                                <div class="card card-body border-0 shadow-sm">
+                                    <h5 class="font-weight-bold">Megvásárolt termékek:</h5>
+                                    @foreach($customer->purchases as $purchase)
+                                        <div class="d-flex justify-content-between mb-2">
                                         <span class="h5 mb-0 item-name font-weight-light">
                                             <span>{{ $purchase->quantity }} × {{ $purchase->getItemName() }}</span>
                                             @if($purchase->completed)
@@ -57,59 +60,60 @@
                                             </small>
                                         </span>
 
-                                        <div class="purchase-action">
-                                            <div class="action d-inline-flex align-items-start mr-2">
-                                                {{--  Teljesítés --}}
-                                                @if(!$purchase->completed)
+                                            <div class="purchase-action">
+                                                <div class="action d-inline-flex align-items-start mr-2">
+                                                    {{--  Teljesítés --}}
+                                                    @if(!$purchase->completed)
+                                                        <form class="d-inline-flex has-tooltip"
+                                                              action="{{ action('CustomerItemsController@complete', $purchase) }}"
+                                                              method="POST"
+                                                              data-toggle="tooltip" data-placement="top"
+                                                              title="Rögzített vásárlás teljesítése">
+                                                            @csrf
+                                                            <button class="btn-complete-purchase btn btn-muted btn-sm px-1 py-0">
+                                                        <span class="icon icon-sm">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                    {{-- Törlés --}}
                                                     <form class="d-inline-flex has-tooltip"
-                                                          action="{{ action('CustomerItemsController@complete', $purchase) }}"
+                                                          action="{{ action('CustomerItemsController@delete', $purchase) }}"
                                                           method="POST"
                                                           data-toggle="tooltip" data-placement="top"
-                                                          title="Rögzített vásárlás teljesítése">
+                                                          title="Rögzített vásárlás törlése">
                                                         @csrf
-                                                        <button class="btn-complete-purchase btn btn-muted btn-sm px-1 py-0">
-                                                        <span class="icon">
-                                                            <i class="fas fa-check"></i>
+                                                        @method('DELETE')
+                                                        <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
+                                                        <span class="icon icon-sm">
+                                                            <i class="fas fa-times"></i>
                                                         </span>
                                                         </button>
                                                     </form>
-                                                @endif
-
-                                                {{-- Törlés --}}
-                                                <form class="d-inline-flex has-tooltip"
-                                                      action="{{ action('CustomerItemsController@delete', $purchase) }}"
-                                                      method="POST"
-                                                      data-toggle="tooltip" data-placement="top"
-                                                      title="Rögzített vásárlás törlése">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn-del-purchase btn btn-muted btn-sm px-1 py-0">
-                                                        <span class="icon">
-                                                            <i class="fas fa-times"></i>
-                                                        </span>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
-                                                <small class="font-weight-bold">Ft</small>
+                                                </div>
+                                                <span class="h5 mb-0 item-price">{{ number_format($purchase->price * $purchase->quantity, 0, '.', ' ') }}
+                                                    <small class="font-weight-bold">Ft</small>
                                             </span>
+                                            </div>
                                         </div>
+                                    @endforeach
+
+                                    {{-- Összegző --}}
+                                    <div class="d-flex justify-content-between align-items-baseline border-top mt-2 pt-2">
+                                        <h4 class="font-weight-bold">Összesen: </h4>
+                                        <h4 class="font-weight-bold">{{ number_format($total, 0, '.', ' ') }}
+                                            <small class="font-weight-bold">Ft</small>
+                                        </h4>
                                     </div>
-                                @endforeach
 
-                                {{-- Összegző --}}
-                                <div class="d-flex justify-content-between align-items-baseline border-top mt-2 pt-2">
-                                    <h4 class="font-weight-bold">Összesen: </h4>
-                                    <h4 class="font-weight-bold">{{ number_format($total, 0, '.', ' ') }}
-                                        <small class="font-weight-bold">Ft</small>
-                                    </h4>
-                                </div>
-
-                                {{-- További vásárlások rögzítése --}}
-                                <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal"
-                                            data-target="#newCustomerItemsModal">További vásárlások rögzítése
-                                    </button>
+                                    {{-- További vásárlások rögzítése --}}
+                                    <div class="text-center mt-4">
+                                        <button type="button" class="btn btn-sm btn-outline-teal" data-toggle="modal"
+                                                data-target="#newCustomerItemsModal">További vásárlások rögzítése
+                                        </button>
+                                    </div>
                                 </div>
                             @else
                                 <p class="lead font-weight-bold mb-0">Az ügyfél még nem vásárolt termékeket.</p>
@@ -165,7 +169,7 @@
                                                             data-comment-id="{{ $comment->id }}"
                                                             data-toggle="modal"
                                                             data-target="#newAlertModal">
-                                                        <span class="icon">
+                                                        <span class="icon icon-sm">
                                                             <i class="fas fa-bell"></i>
                                                         </span>
                                                     </button>
@@ -181,7 +185,7 @@
                                                                 data-comment-id="{{ $comment->id }}"
                                                                 data-comment-message="{{ $comment->message }}"
                                                                 data-target="#editCommentModal">
-                                                            <span class="icon">
+                                                            <span class="icon icon-sm">
                                                                 <i class="fas fa-pen"></i>
                                                             </span>
                                                         </button>
@@ -196,7 +200,7 @@
                                                         @method('DELETE')
                                                         <button type="submit"
                                                                 class="btn btn-del-comment btn-muted px-1 py-0">
-                                                            <span class="icon">
+                                                            <span class="icon icon-sm">
                                                                 <i class="fas fa-times"></i>
                                                             </span>
                                                         </button>
@@ -241,7 +245,7 @@
                                                                   title="Teendő teljesítése">
                                                                 @csrf
                                                                 <button class="btn btn-complete-alert btn-sm btn-link btn-muted px-1 py-0">
-                                                                <span class="icon">
+                                                                <span class="icon icon-sm">
                                                                     <i class="fas fa-check"></i>
                                                                 </span>
                                                                 </button>
@@ -258,7 +262,7 @@
                                                                     data-alert-id="{{ $alert->id }}"
                                                                     data-message="{{ $alert->message }}"
                                                                     data-time="{{ $alert->time->format('Y/m/d H:i') }}">
-                                                                <span class="icon">
+                                                                <span class="icon icon-sm">
                                                                     <i class="fas fa-pen"></i>
                                                                 </span>
                                                             </button>
@@ -271,7 +275,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="btn btn-del-alert btn-sm btn-link btn-muted px-1 py-0">
-                                                                <span class="icon">
+                                                                <span class="icon icon-sm">
                                                                     <i class="fas fa-times"></i>
                                                                 </span>
                                                             </button>
@@ -391,8 +395,8 @@
 
                     // Kiszedjük a jelenleg kiválasztott terméket
                     const selected = selectItem.options[selectItem.selectedIndex];
-                    const priceInput = $(selectItem).closest('.form-row').find('input.customer-item-price')[0];
-                    const qtyInput = $(selectItem).closest('.form-row').find('input.customer-item-quantity')[0];
+                    const priceInput = $(selectItem).closest('.customer-item').find('input.customer-item-price')[0];
+                    const qtyInput = $(selectItem).closest('.customer-item').find('input.customer-item-quantity')[0];
 
                     priceInput.value = selected.dataset.price;
                     qtyInput.value = 1;
@@ -416,7 +420,7 @@
                 // Új rögzítendő tárgy törlése
                 $(document).on('click.counter', '.btn-del-customer-item', (e) => {
                     const selectItem = e.target;
-                    const customerItemRow = $(selectItem).closest('.form-row')[0];
+                    const customerItemRow = $(selectItem).closest('.customer-item')[0];
                     const parent = customerItemRow.parentNode;
                     parent.removeChild(customerItemRow);
 

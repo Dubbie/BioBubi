@@ -5,8 +5,9 @@
         <div class="d-flex justify-content-between align-items-start mb-4">
             <h1 class="font-weight-bold">Megrendelők</h1>
             <div class="btn-toolbar">
-                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-outline-dark">Új
-                    megrendelő</a>
+                <a href="{{ action('CustomersController@create') }}" class="btn btn-sm btn-teal shadow">
+                    <span>Új megrendelő</span>
+                </a>
             </div>
         </div>
 
@@ -33,7 +34,7 @@
                                   method="POST" data-toggle="tooltip" data-placement="top" title="Teendő teljesítése">
                                 @csrf
                                 <button class="btn btn-complete-alert btn-sm btn-muted px-1 py-0">
-                                    <span class="icon">
+                                    <span class="icon icon-sm">
                                         <i class="fas fa-check"></i>
                                     </span>
                                 </button>
@@ -46,7 +47,7 @@
                                         data-alert-id="{{ $alert->id }}"
                                         data-message="{{ $alert->message }}"
                                         data-time="{{ $alert->time->format('Y/m/d H:i') }}">
-                                <span class="icon">
+                                <span class="icon icon-sm">
                                     <i class="fas fa-pen"></i>
                                 </span>
                             </button>
@@ -57,7 +58,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-del-alert btn-sm btn-muted px-1 py-0">
-                                    <span class="icon">
+                                    <span class="icon icon-sm">
                                         <i class="fas fa-times"></i>
                                     </span>
                                 </button>
@@ -81,52 +82,53 @@
                     @include('inc.sidebar')
                 </div>
                 <div class="col-lg-9">
-                    <table id="customers-table" class="table table-sm table-hover table-borderless">
-                        <thead class="">
-                        <tr>
-                            <th scope="col" class="tr-clickable" data-sort="string">Név</th>
-                            <th scope="col" class="tr-clickable" data-sort="string">Város</th>
-                            <th scope="col" class="tr-clickable" data-sort="int">Telefonszám</th>
-                            <th scope="col" class="tr-clickable" data-sort="string">E-mail</th>
-                            <th scope="col" class="tr-clickable" data-sort="string">Típus</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($customers as $customer)
-                            <tr class="tr-clickable action-hover-only"
-                                data-redirect-to="{{ action('CustomersController@show', $customer) }}">
-                                <td>{{ $customer->name }}</td>
-                                <td>{{ $customer->address->city }}</td>
-                                <td>{{ $customer->phone }}</td>
-                                <td>{{ $customer->email }}</td>
-                                <td>{{ $customer->getResellerLabel() }}</td>
-                                <td class="td-action text-right">
-                                    {{-- Szerkesztés --}}
-                                    <a href="{{ action('CustomersController@edit', $customer) }}"
-                                       class="btn btn-sm btn-muted p-1" data-toggle="tooltip" data-placement="top" title="Megrendelő szerkesztése">
-                                        <span class="icon">
+                    <div class="card card-body border-0 shadow-sm">
+                        <table id="customers-table" class="table table-sm table-hover table-borderless mb-0">
+                            <thead class="">
+                            <tr>
+                                <th scope="col" class="tr-clickable" data-sort="string">Név</th>
+                                <th scope="col" class="tr-clickable" data-sort="string">Város</th>
+                                <th scope="col" class="tr-clickable" data-sort="int">Telefonszám</th>
+                                <th scope="col" class="tr-clickable" data-sort="string">E-mail</th>
+                                <th scope="col" class="tr-clickable" data-sort="string">Típus</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($customers as $customer)
+                                <tr class="tr-clickable action-hover-only"
+                                    data-redirect-to="{{ action('CustomersController@show', $customer) }}">
+                                    <td>{{ $customer->name }}</td>
+                                    <td>{{ $customer->address->city }}</td>
+                                    <td>{{ $customer->phone }}</td>
+                                    <td>{{ $customer->email }}</td>
+                                    <td>{{ $customer->getResellerLabel() }}</td>
+                                    <td class="td-action text-right">
+                                        {{-- Szerkesztés --}}
+                                        <a href="{{ action('CustomersController@edit', $customer) }}"
+                                           class="btn btn-sm btn-muted p-1" data-toggle="tooltip" data-placement="top" title="Megrendelő szerkesztése">
+                                        <span class="icon icon-sm">
                                             <i class="fas fa-pen"></i>
                                         </span>
-                                    </a>
+                                        </a>
 
-                                    {{-- Törlés --}}
-                                    <form action="{{ action('CustomersController@delete', $customer) }}"
-                                          class="d-inline-block" method="POST" data-toggle="tooltip" data-placement="top" title="Megrendelő törlése">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
-                                            <span class="icon">
+                                        {{-- Törlés --}}
+                                        <form action="{{ action('CustomersController@delete', $customer) }}"
+                                              class="d-inline-block" method="POST" data-toggle="tooltip" data-placement="top" title="Megrendelő törlése">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-del-customer btn-sm btn-muted px-1 py-0">
+                                            <span class="icon icon-sm">
                                                 <i class="fas fa-times"></i>
                                             </span>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     {{ $customers->appends(request()->except('page'))->links() }}
                 </div>
             </div>
