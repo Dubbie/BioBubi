@@ -26,11 +26,11 @@ class Comment extends Model
     }
 
     /**
-     * Visszaadja a kommenthez tartpzó teendőket
+     * Visszaadja a kommenthez tartozó teendőket
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function alerts() {
-        return $this->hasMany(Alert::class, 'comment_id')->where('user_id', '=', Auth::id());
+        return $this->hasMany(Alert::class, 'comment_id');
     }
 }
