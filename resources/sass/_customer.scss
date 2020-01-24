@@ -52,3 +52,17 @@ $transition-speed: 250ms;
 .customer-chooser-label {
   transition: all $transition-speed ease-in-out;
 }
+
+.customer {
+  &:hover {
+    cursor: pointer;
+    background-color: $body-bg;
+  }
+}
+
+.customer-purchase {
+  &:hover {
+    cursor: pointer;
+    background-color: $body-bg;
+  }
+}

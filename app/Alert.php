@@ -35,23 +35,29 @@ class Alert extends Model
         return $value != null ? Carbon::parse($value) : null;
     }
 
-    public function getRemainingLabel() {
-        $now = Carbon::now();
-
-        if(!$this->completed) {
-            if ($this->time->diffInHours($now, false) < 0) {
-                $label = "Hátramaradt idő: " . $this->time->longAbsoluteDiffForHumans($now);
-            } else {
-                $label = "Határidőn túl";
-            }
-        } else {
-            $label = "Teljesítve";
-        }
-
-        return $label;
+    /**
+     * Visszaadja a hátramaradt időt
+     * @return string
+     */
+    public function getRemainingTime() {
+        return $this->time->shortRelativeToNowDiffForHumans();
     }
 
+    /**
+     * Visszaadja, hogy határidőn túl ment-e a teendő
+     *
+     * @return bool
+     */
     public function isOverdue() {
         return !$this->completed && $this->time->diffInHours(Carbon::now(), false) > 0;
+    }
+
+    /**
+     * Visszaadja a státusz badge-t
+     *
+     * @return string
+     */
+    public function getStatusBadge() {
+        return view('inc.status_badge')->with('alert', $this)->toHtml();
     }
 }
