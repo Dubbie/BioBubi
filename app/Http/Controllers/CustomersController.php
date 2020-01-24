@@ -106,11 +106,11 @@ class CustomersController extends Controller
     public function store(Request $request) {
         $validated_data = $request->validate([
             'name' => 'required',
-            'phone' => 'required|unique:customers',
+            'phone' => 'required|max:15|unique:customers,phone',
             'zip' => 'required',
             'city' => 'required',
             'street' => 'required',
-            'email' => 'required|unique:customers|email',
+            'email' => 'required|unique:customers,email|email',
             'is_reseller' => 'required',
         ]);
 
@@ -153,11 +153,11 @@ class CustomersController extends Controller
 
         $validated_data = $request->validate([
             'name' => 'required',
-            'phone' => 'required|unique:customers,phone,' . $customer_id,
+            'phone' => 'required|max:15|unique:customers,phone,' . $customer_id,
             'zip' => 'required',
             'city' => 'required',
             'street' => 'required',
-            'email' => 'required|unique:customers,email,' . $customer_id . '|email',
+            'email' => 'required|email|unique:customers,email,' . $customer_id,
             'is_reseller' => 'required',
         ]);
 

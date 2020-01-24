@@ -110,8 +110,8 @@
                 </div>
             </div>
         @else
-            <p class="lead font-weight-bold mb-0">Az ügyfél még nem vásárolt termékeket.</p>
-            <button type="button" class="btn btn-primary" data-toggle="modal"
+            <p class="lead font-weight-bold mb-2">Az ügyfél még nem vásárolt termékeket.</p>
+            <button type="button" class="btn btn-sm btn-primary shadow" data-toggle="modal"
                     data-target="#newCustomerItemsModal">Vásárlások rögzítése
             </button>
         @endif
