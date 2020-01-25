@@ -6,6 +6,7 @@ use App\Address;
 use App\Alert;
 use App\Customer;
 use App\Item;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -13,36 +14,35 @@ use Illuminate\Support\Str;
 
 class CustomersController extends Controller
 {
+    private $customers_service;
+
+    public function __construct()
+    {
+        try {
+            $this->customers_service = app()->make('CustomersService');
+        } catch (BindingResolutionException $e) {
+            dd($e);
+        }
+    }
+
     /**
-     * Betölti a meglévő megrendelőket
-     *
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws BindingResolutionException
      */
     public function index(Request $request) {
-        $customers_query = Customer::query();
         $filter = [];
 
-        // Név szűrés
-        if ($request->has('filter-name')) {
-            if (strlen($request->input('filter-name')) == 0) {
-                $request->request->remove('filter-name');
-            } else {
-                $filter['name'] = $request->input('filter-name');
-                $customers_query->where('name', 'like', sprintf('%%%s%%', $filter['name']));
-            }
+        // Név szűréshez
+        if ($request->has('filter-name') && $request->input('filter-name')) {
+            $filter['name'] = $request->input('filter-name');
         }
+
+        // Város szűréshez
+        $cities = Address::select('city', DB::raw('count(*) as total'))->groupBy('city')->get()->toArray();
         if ($request->has('filter-city')) {
             $filter['city'] = $request->input('filter-city');
-
-            $customers_query->whereHas('address', function ($query) use ($filter) {
-                $query->whereIn('city', $filter['city']);
-            });
         }
-
-        // Városok szűréshez
-        $cities = Address::select('city', DB::raw('count(*) as total'))->groupBy('city')->get()->toArray();
-
         if(isset($filter['city'])) {
             foreach ($cities as &$city) {
                 if (in_array($city['city'], $filter['city'])) {
@@ -64,7 +64,7 @@ class CustomersController extends Controller
         }
 
         // Query lefuttatása
-        $customers = $customers_query->orderBy('name', 'asc')->paginate(50);
+        $customers = $this->customers_service->get($filter);
 
         return view('customers.index')->with([
             'customers' => $customers,

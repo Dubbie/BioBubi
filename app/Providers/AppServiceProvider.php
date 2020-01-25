@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\CustomersService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
 
         Carbon::setLocale(config('app.locale'));
         setlocale(LC_ALL, 'hu_HU');
+
+        $this->app->bind('CustomersService', CustomersService::class);
     }
 
     /**
