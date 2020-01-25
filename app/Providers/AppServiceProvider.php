@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\AlertsService;
 use App\Services\CustomersService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         setlocale(LC_ALL, 'hu_HU');
 
         $this->app->bind('CustomersService', CustomersService::class);
+        $this->app->bind('AlertsService', AlertsService::class);
     }
 
     /**

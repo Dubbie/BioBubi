@@ -30,6 +30,6 @@ class CustomersService {
         }
 
         // Query lefuttatása
-        return $customers_query->orderBy('name', 'asc')->paginate(10);
+        return $customers_query->orderBy('name', 'asc')->paginate(50);
     }
 }

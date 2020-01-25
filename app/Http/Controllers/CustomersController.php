@@ -6,7 +6,8 @@ use App\Address;
 use App\Alert;
 use App\Customer;
 use App\Item;
-use Illuminate\Contracts\Container\BindingResolutionException;
+use App\Services\AlertsService;
+use App\Services\CustomersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,21 +15,26 @@ use Illuminate\Support\Str;
 
 class CustomersController extends Controller
 {
+    /** @var AlertsService  */
+    private $alerts_service;
+
+    /** @var CustomersService  */
     private $customers_service;
 
-    public function __construct()
+    /**
+     * CustomersController constructor.
+     * @param CustomersService $customers_service
+     * @param AlertsService $alerts_service
+     */
+    public function __construct(CustomersService $customers_service, AlertsService $alerts_service)
     {
-        try {
-            $this->customers_service = app()->make('CustomersService');
-        } catch (BindingResolutionException $e) {
-            dd($e);
-        }
+        $this->customers_service = $customers_service;
+        $this->alerts_service = $alerts_service;
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws BindingResolutionException
      */
     public function index(Request $request) {
         $filter = [];
@@ -51,17 +57,8 @@ class CustomersController extends Controller
             }
         }
 
-        // Teendők
-        $alerts = Alert::where('completed', '=', 0)->get();
-        $filtered_alerts = [];
-        $now = Carbon::now();
-        foreach ($alerts as &$alert) {
-            if ($now->diffInHours($alert->time) <= 24) {
-
-                $alert->customer = $alert->comment->customer;
-                $filtered_alerts[] = $alert;
-            }
-        }
+        // Esedékes teendők
+        $alerts = $this->alerts_service->getDueAlerts();
 
         // Query lefuttatása
         $customers = $this->customers_service->get($filter);
@@ -70,7 +67,7 @@ class CustomersController extends Controller
             'customers' => $customers,
             'cities' => $cities,
             'filter' => $filter,
-            'alerts' => $filtered_alerts,
+            'alerts' => $alerts,
         ]);
     }
 

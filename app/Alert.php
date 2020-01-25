@@ -49,7 +49,7 @@ class Alert extends Model
      * @return bool
      */
     public function isOverdue() {
-        return !$this->completed && $this->time->diffInHours(Carbon::now(), false) > 0;
+        return !$this->completed && $this->time->diffInMilliseconds(Carbon::now(), false) > 0;
     }
 
     /**
