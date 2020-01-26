@@ -23,7 +23,7 @@
                                 <th scope="col">ID</th>
                                 <th scope="col">Név</th>
                                 <th scope="col" class="text-right">Ár</th>
-                                <th scope="col" class="text-right">Rögzítve</th>
+                                <th scope="col" class="text-right">Eladva</th>
                                 <th scope="col"></th>
                             </tr>
                             </thead>

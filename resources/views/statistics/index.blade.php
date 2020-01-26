@@ -37,7 +37,7 @@
                             <div class="bg-warning-pastel text-warning-pastel rounded-circle d-flex align-items-center justify-content-center"
                                  style="height: 48px; width: 48px;">
                                 <span class="icon">
-                                    <i class="fas fa-users"></i>
+                                    <i class="fas fa-shopping-cart"></i>
                                 </span>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                             <div class="bg-danger-pastel text-danger-pastel rounded-circle d-flex align-items-center justify-content-center"
                                  style="height: 48px; width: 48px;">
                                 <span class="icon">
-                                    <i class="fas fa-users"></i>
+                                    <i class="fas fa-archive"></i>
                                 </span>
                             </div>
                         </div>
