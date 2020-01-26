@@ -1,6 +1,15 @@
 <template>
     <div id="customers">
-        <div class="row">
+        <div class="row" v-if="customers == null">
+            <div class="col-md-12 text-center">
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="spinner-border text-primary mr-2" role="status"></div>
+                    <p class="mb-0 lead">Megrendelők betöltése folyamatban...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" v-else-if="customers.length > 0">
             <div class="col-lg-3">
                 <!-- Oldalsáv -->
             </div>
@@ -14,7 +23,7 @@
                             <div class="col-md-auto pr-3">
                                 <div class="d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2"
                                      style="width: 32px; height: 32px;"
-                                        v-if="customer['is_reseller']">
+                                        v-if="customer['is_reseller'] === 0">
                                     <span class="icon text-info-pastel">
                                         <i class="fas fa-user"></i>
                                     </span>
@@ -33,7 +42,7 @@
                                 <div class="customer-basics">
                                     <p class="mb-0 font-weight-bold">
                                         <span>{{ customer['name'] }}</span>
-                                        <small class="d-block">{{ customer['formattedAddress']}}</small>
+                                        <small class="d-block">{{ formatAddress(customer.address) }}</small>
                                     </p>
                                 </div>
                             </div>
@@ -66,13 +75,36 @@
                 </div>
             </div>
         </div>
+        <div class="row" v-else>
+            <div class="col-md-12">
+                <p>Nincsenek még megrendelők az adatbázisban!</p>
+                <a href="/megrendelok/uj" class="btn btn-sm btn-teal">Új megrendelő hozzáadása</a>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
+        data() {
+          return {
+              customers: null,
+          }
+        },
         mounted() {
-            console.log('Component mounted.')
+            this.fetchCustomers();
+        },
+        methods: {
+            fetchCustomers() {
+                fetch('/api/megrendelok').then((response) => response.json()).then((response) => {
+                   this.customers = response.data;
+
+                   console.log(response);
+                });
+            },
+            formatAddress(address) {
+                return `${address.zip} ${address.city}, ${address.street}`;
+            }
         }
     }
 </script>

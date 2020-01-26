@@ -71,6 +71,11 @@ class CustomersController extends Controller
         ]);
     }
 
+    public function get() {
+        return $this->customers_service->get([], true);
+    }
+
+
     /**
      * Mutatja az új megrendelő létrehozására szolgáló panelt.
      *

@@ -12,10 +12,15 @@ class CustomersService {
 
     /**
      * @param array $filter
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @param bool $json
+     * @return string
      */
-    public function get($filter = []) {
+    public function get($filter = [], $json = false) {
         $customers_query = Customer::query();
+
+        if ($json) {
+            $customers_query = Customer::with('address');
+        }
 
         // Név szűrés
         if (Arr::has($filter, 'name')) {

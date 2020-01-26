@@ -108,6 +108,7 @@
         crossorigin="anonymous"></script>
 <script src="{{ url('/js/stupidtable.min.js') }}"></script>
 <script src="{{ url('/js/jquery.datetimepicker.full.min.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 @yield('custom-scripts')
 </body>
 </html>

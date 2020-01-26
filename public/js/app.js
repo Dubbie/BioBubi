@@ -166,9 +166,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      customers: null
+    };
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    this.fetchCustomers();
+  },
+  methods: {
+    fetchCustomers: function fetchCustomers() {
+      var _this = this;
+
+      fetch('/api/megrendelok').then(function (response) {
+        return response.json();
+      }).then(function (response) {
+        _this.customers = response.data;
+        console.log(response);
+      });
+    },
+    formatAddress: function formatAddress(address) {
+      return "".concat(address.zip, " ").concat(address.city, ", ").concat(address.street);
+    }
   }
 });
 
@@ -658,81 +693,108 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "customers" } }, [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-lg-3" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-lg-9" }, [
-        _c(
-          "div",
-          { staticClass: "card card-body shadow-sm border-0 p-0" },
-          [
-            _c("h5", { staticClass: "font-weight-bold p-3 mb-0" }, [
-              _vm._v("Találatok")
-            ]),
-            _vm._v(" "),
-            _vm._l(_vm.customers, function(customer) {
-              return _c(
-                "div",
-                { staticClass: "customer py-2 px-4 action-hover-only" },
-                [
-                  _c("div", { staticClass: "row no-gutters" }, [
-                    _c("div", { staticClass: "col-md-auto pr-3" }, [
-                      customer["is_reseller"]
-                        ? _c(
-                            "div",
-                            {
-                              staticClass:
-                                "d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2",
-                              staticStyle: { width: "32px", height: "32px" }
-                            },
-                            [_vm._m(0, true)]
-                          )
-                        : _c(
-                            "div",
-                            {
-                              staticClass:
-                                "d-flex justify-content-center align-items-center bg-success-pastel rounded-circle mt-2",
-                              staticStyle: { width: "32px", height: "32px" }
-                            },
-                            [_vm._m(1, true)]
-                          )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col" }, [
-                      _c("div", { staticClass: "customer-basics" }, [
-                        _c("p", { staticClass: "mb-0 font-weight-bold" }, [
-                          _c("span", [_vm._v(_vm._s(customer["name"]))]),
-                          _vm._v(" "),
-                          _c("small", { staticClass: "d-block" }, [
-                            _vm._v(_vm._s(customer["formattedAddress"]))
-                          ])
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-3 text-right" }, [
-                      _c("p", { staticClass: "mb-0 mr-4" }, [
-                        _c("span", [_vm._v(_vm._s(customer["phone"]))]),
+    _vm.customers == null
+      ? _c("div", { staticClass: "row" }, [_vm._m(0)])
+      : _vm.customers.length > 0
+      ? _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-lg-3" }),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-9" }, [
+            _c(
+              "div",
+              { staticClass: "card card-body shadow-sm border-0 p-0" },
+              [
+                _c("h5", { staticClass: "font-weight-bold p-3 mb-0" }, [
+                  _vm._v("Találatok")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.customers, function(customer) {
+                  return _c(
+                    "div",
+                    { staticClass: "customer py-2 px-4 action-hover-only" },
+                    [
+                      _c("div", { staticClass: "row no-gutters" }, [
+                        _c("div", { staticClass: "col-md-auto pr-3" }, [
+                          customer["is_reseller"] === 0
+                            ? _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2",
+                                  staticStyle: { width: "32px", height: "32px" }
+                                },
+                                [_vm._m(1, true)]
+                              )
+                            : _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "d-flex justify-content-center align-items-center bg-success-pastel rounded-circle mt-2",
+                                  staticStyle: { width: "32px", height: "32px" }
+                                },
+                                [_vm._m(2, true)]
+                              )
+                        ]),
                         _vm._v(" "),
-                        _c("small", { staticClass: "d-block text-muted" }, [
-                          _vm._v(_vm._s(customer["email"]))
-                        ])
+                        _c("div", { staticClass: "col" }, [
+                          _c("div", { staticClass: "customer-basics" }, [
+                            _c("p", { staticClass: "mb-0 font-weight-bold" }, [
+                              _c("span", [_vm._v(_vm._s(customer["name"]))]),
+                              _vm._v(" "),
+                              _c("small", { staticClass: "d-block" }, [
+                                _vm._v(
+                                  _vm._s(_vm.formatAddress(customer.address))
+                                )
+                              ])
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-3 text-right" }, [
+                          _c("p", { staticClass: "mb-0 mr-4" }, [
+                            _c("span", [_vm._v(_vm._s(customer["phone"]))]),
+                            _vm._v(" "),
+                            _c("small", { staticClass: "d-block text-muted" }, [
+                              _vm._v(_vm._s(customer["email"]))
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _vm._m(3, true)
                       ])
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(2, true)
-                  ])
-                ]
-              )
-            })
-          ],
-          2
-        )
-      ])
-    ])
+                    ]
+                  )
+                })
+              ],
+              2
+            )
+          ])
+        ])
+      : _c("div", { staticClass: "row" }, [_vm._m(4)])
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12 text-center" }, [
+      _c(
+        "div",
+        { staticClass: "d-flex justify-content-center align-items-center" },
+        [
+          _c("div", {
+            staticClass: "spinner-border text-primary mr-2",
+            attrs: { role: "status" }
+          }),
+          _vm._v(" "),
+          _c("p", { staticClass: "mb-0 lead" }, [
+            _vm._v("Megrendelők betöltése folyamatban...")
+          ])
+        ]
+      )
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -772,6 +834,23 @@ var staticRenderFns = [
             _c("i", { staticClass: "fas fa-times" })
           ])
         ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12" }, [
+      _c("p", [_vm._v("Nincsenek még megrendelők az adatbázisban!")]),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-sm btn-teal",
+          attrs: { href: "/megrendelok/uj" }
+        },
+        [_vm._v("Új megrendelő hozzáadása")]
       )
     ])
   }
