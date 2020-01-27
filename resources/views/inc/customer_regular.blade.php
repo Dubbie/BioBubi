@@ -61,18 +61,19 @@
                             <div class="td-action text-right">
                                 {{--  Teljesítés --}}
                                 @if(!$purchase->completed)
-                                    <form class="d-inline-flex has-tooltip"
-                                          action="{{ action('CustomerItemsController@complete', $purchase) }}"
-                                          method="POST"
-                                          data-toggle="tooltip" data-placement="top"
+                                    <span data-toggle="tooltip"
+                                          data-placement="top"
                                           title="Rögzített vásárlás teljesítése">
-                                        @csrf
-                                        <button class="btn-complete-purchase btn btn-muted btn-sm p-1">
+                                        <button class="btn btn-complete-purchase btn-sm btn-muted"
+                                                data-toggle="modal"
+                                                data-target="#completePurchaseModal"
+                                                data-purchase-id="{{ $purchase->id }}"
+                                                data-purchase-date="{{ $purchase->date->format('Y/m/d H:i') }}">
                                             <span class="icon icon-sm">
-                                                <i class="fas fa-check"></i>
+                                                <i class="fas fa-pen"></i>
                                             </span>
                                         </button>
-                                    </form>
+                                    </span>
                                 @endif
 
                                 {{-- Törlés --}}

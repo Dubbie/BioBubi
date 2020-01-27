@@ -40,23 +40,24 @@ class CustomerItemsController extends Controller
         }
 
         return redirect(action('CustomersController@show', ['id' => $validated_data['customer_id']]))->with([
-            'success' => 'Vásárolt termékek sikeresen rögzítve'
+            'success' => 'Vásárolt termékek sikeresen rögzítve!'
         ]);
     }
 
     /**
      * A rögzített terméket frissíti teljesültté
      *
-     * @param $id
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function complete($id) {
-        $purchase = CustomerItems::find($id);
+    public function complete(Request $request) {
+        $purchase = CustomerItems::find($request->input('complete_purchase_id'));
         $purchase->completed = true;
+        $purchase->date = $request->input('complete_purchase_date');
         $purchase->save();
 
         return redirect(url()->previous())->with([
-            'success' => 'Vásárolt termékek sikeresen rögzítve'
+            'success' => 'Vásárolt termékek sikeresen teljesítve!'
         ]);
     }
 

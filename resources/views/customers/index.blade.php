@@ -25,44 +25,48 @@
                     <div class="card card-body shadow-sm border-0 p-0">
                         <h5 class="font-weight-bold p-3 mb-0">Találatok</h5>
                         @foreach($customers as $customer)
-                            <div class="customer py-2 px-4 action-hover-only"
-                                 data-href="{{ action('CustomersController@show', $customer) }}">
+                            <div class="customer py-2 px-4 action-hover-only">
                                 <div class="row no-gutters">
-                                    {{-- Ikonka --}}
-                                    <div class="col-md-auto pr-3">
-                                        @if(!$customer->is_reseller)
-                                            <div class="d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2"
-                                                 style="width: 32px; height: 32px;">
+                                    <a href="{{ action('CustomersController@show', $customer) }}"
+                                        class="col-md-11 customer-link text-normal text-decoration-none">
+                                       <div class="row">
+                                           {{-- Ikonka --}}
+                                           <div class="col-md-auto pr-3">
+                                               @if(!$customer->is_reseller)
+                                                   <div class="d-flex justify-content-center align-items-center bg-info-pastel rounded-circle mt-2"
+                                                        style="width: 32px; height: 32px;">
                                             <span class="icon text-info-pastel">
                                                 <i class="fas fa-user"></i>
                                             </span>
-                                            </div>
-                                        @else
-                                            <div class="d-flex justify-content-center align-items-center bg-success-pastel rounded-circle mt-2"
-                                                 style="width: 32px; height: 32px;">
+                                                   </div>
+                                               @else
+                                                   <div class="d-flex justify-content-center align-items-center bg-success-pastel rounded-circle mt-2"
+                                                        style="width: 32px; height: 32px;">
                                             <span class="icon text-success-pastel">
                                                 <i class="fas fa-comments-dollar"></i>
                                             </span>
-                                            </div>
-                                        @endif
-                                    </div>
+                                                   </div>
+                                               @endif
+                                           </div>
 
-                                    {{-- Név és Lakcím --}}
-                                    <div class="col">
-                                        <div class="customer-basics">
-                                            <p class="mb-0 font-weight-bold">{{ $customer->name }}
-                                                <small class="d-block">{{ $customer->address->getFormattedAddress() }}</small>
-                                            </p>
-                                        </div>
-                                    </div>
+                                           {{-- Név és Lakcím --}}
+                                           <div class="col">
+                                               <div class="customer-basics">
+                                                   <p class="mb-0 font-weight-bold">{{ $customer->name }}
+                                                       <small class="d-block">{{ $customer->address->getFormattedAddress() }}</small>
+                                                   </p>
+                                               </div>
+                                           </div>
 
-                                    {{-- Telefonszám és E-mail --}}
-                                    <div class="col-md-3 text-right">
-                                        <p class="mb-0 mr-4">
-                                            <span>{{ $customer->phone }}</span>
-                                            <small class="d-block text-muted">{{ $customer->email }}</small>
-                                        </p>
-                                    </div>
+                                           {{-- Telefonszám és E-mail --}}
+                                           <div class="col-md-5 text-right">
+                                               <p class="mb-0 mr-4">
+                                                   <span>{{ $customer->phone }}</span>
+                                                   <small class="d-block text-muted">{{ $customer->email }}</small>
+                                               </p>
+                                           </div>
+                                       </div>
+                                    </a>
 
                                     {{-- Gombok --}}
                                     <div class="col-md-auto text-right td-action">

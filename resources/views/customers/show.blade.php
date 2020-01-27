@@ -37,6 +37,9 @@
 
     {{-- Megjegyzés szerkesztés --}}
     @include('inc.modals.edit_alert')
+
+    {{-- Rögzített tárgy teljesítése --}}
+    @include('inc.modals.complete_purchase')
 @endsection
 
 @section('custom-scripts')
@@ -148,6 +151,11 @@
                     if (!confirm('Biztosan törölni szeretnéd a rögzített vásárlást a termékről? Ez a folyamat nem visszafordítható!')) {
                         e.preventDefault();
                     }
+                });
+
+                $('.btn-complete-purchase').on('click', (e) => {
+                    $('#complete_purchase_id').val(e.currentTarget.dataset.purchaseId);
+                    $('#complete_purchase_date').val(e.currentTarget.dataset.purchaseDate);
                 });
 
                 // Form előtt a rejtett checkboxokat tiltsuk le
@@ -305,6 +313,7 @@
                 // Teendős datetime picker
                 initDateTimePicker('new_alert_time');
                 initDateTimePicker('edit_alert_time');
+                initDateTimePicker('complete_purchase_date');
             }
 
             init();
