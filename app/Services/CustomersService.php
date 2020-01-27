@@ -37,4 +37,41 @@ class CustomersService {
         // Query lefuttatása
         return $customers_query->orderBy('name', 'asc')->paginate(50);
     }
+
+    /**
+     * Kitörli a megadott ID alapján a megrendelőt
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function delete($id) {
+        $customer = Customer::find($id);
+
+        if ($customer) {
+            // Kitöröljük a lakcímét
+            $customer->address()->each(function ($address) {
+                $address->delete();
+            });
+
+            // Kitöröljük a rögzített termékeit
+            $customer->purchases()->each(function ($purchase) {
+                $purchase->delete();
+            });
+
+            // Megjegyzések törlése
+            $customer->comments()->each(function ($comment) {
+                // Teendők törlése
+                $comment->alerts()->each(function ($alert) {
+                    $alert->delete();
+                });
+
+                $comment->delete();
+            });
+
+            // Kitöröljük a felhasználót
+            return $customer->delete();
+        }
+
+        return false;
+    }
 }

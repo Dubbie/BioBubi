@@ -6,6 +6,7 @@ use App\Address;
 use App\Alert;
 use App\Customer;
 use App\Item;
+use App\Services\AddressService;
 use App\Services\AlertsService;
 use App\Services\CustomersService;
 use Illuminate\Http\Request;
@@ -21,15 +22,20 @@ class CustomersController extends Controller
     /** @var CustomersService  */
     private $customers_service;
 
+    /** @var AddressService  */
+    private $address_service;
+
     /**
      * CustomersController constructor.
      * @param CustomersService $customers_service
      * @param AlertsService $alerts_service
+     * @param AddressService $address_service
      */
-    public function __construct(CustomersService $customers_service, AlertsService $alerts_service)
+    public function __construct(CustomersService $customers_service, AlertsService $alerts_service, AddressService $address_service)
     {
         $this->customers_service = $customers_service;
         $this->alerts_service = $alerts_service;
+        $this->address_service = $address_service;
     }
 
     /**
@@ -45,17 +51,15 @@ class CustomersController extends Controller
         }
 
         // Város szűréshez
-        $cities = Address::select('city', DB::raw('count(*) as total'))->groupBy('city')->get()->toArray();
-        if ($request->has('filter-city')) {
-            $filter['city'] = $request->input('filter-city');
-        }
-        if(isset($filter['city'])) {
-            foreach ($cities as &$city) {
-                if (in_array($city['city'], $filter['city'])) {
-                    $city['checked'] = true;
-                }
+        $cities = $this->address_service->getUniqueCities();
+        foreach ($cities as &$city) {
+            if ($request->has('filter-city') && in_array($city['name'], $request->input('filter-city'))) {
+                $city['checked'] = true;
+            } else {
+                $city['checked'] = false;
             }
         }
+        $filter['cities'] = $cities;
 
         // Esedékes teendők
         $alerts = $this->alerts_service->getDueAlerts();
@@ -65,16 +69,26 @@ class CustomersController extends Controller
 
         return view('customers.index')->with([
             'customers' => $customers,
-            'cities' => $cities,
             'filter' => $filter,
             'alerts' => $alerts,
         ]);
     }
 
-    public function get() {
-        return $this->customers_service->get([], true);
-    }
+    public function get(Request $request) {
+        $filter = [];
 
+        // Név szűréshez
+        if ($request->has('filter-name')) {
+            $filter['name'] = $request->input('filter-name');
+        }
+
+        // Város szűréshez
+        if ($request->has('filter-city')) {
+            $filter['city'] = $request->input('filter-city');
+        }
+
+        return $this->customers_service->get($filter, true);
+    }
 
     /**
      * Mutatja az új megrendelő létrehozására szolgáló panelt.
@@ -219,21 +233,33 @@ class CustomersController extends Controller
         // Megkeressük a felhasználót
         $customer = Customer::find($id);
 
-        // Kitöröljük a lakcímét
-        $customer->address()->each(function ($address) {
-           $address->delete();
-        });
-
-        // Kitöröljük a rögzített termékeit
-        $customer->purchases()->each(function ($purchase) {
-            $purchase->delete();
-        });
-
         // Kitöröljük a felhasználót
-         $customer->delete();
+        $this->customers_service->delete($id);
 
         return redirect(action('CustomersController@index'))->with([
             'success' => 'Megrendelő sikeresen törölve'
         ]);
+    }
+
+    /**
+     * Kitörli a megrendelőt a hozzá tartozó lakcímmel és vásárolt termékekkel együtt.
+     *
+     * @param $id
+     * @return array
+     */
+    public function deleteUsingApi($id) {
+        $response = [
+            'success' => false,
+            'message' => 'A törölni kívánt felhasználó nem található az adatbázisban!',
+        ];
+
+        // Kitöröljük a felhasználót
+        if ($this->customers_service->delete($id)) {
+            $response['success'] = true;
+            $response['message'] = 'Felhasználó sikeresen törölve!';
+        }
+
+        // Visszatérünk
+        return $response;
     }
 }

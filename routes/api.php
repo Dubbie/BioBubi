@@ -18,3 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/megrendelok', 'CustomersController@get');
+Route::delete('/megrendelok/{id}', 'CustomersController@deleteUsingApi');
+Route::get('/varosok/egyedi', 'AddressesController@getUniques');

@@ -15,7 +15,7 @@
         @include('inc.todos')
 
         {{-- Megrendelők --}}
-        <customers></customers>
+        <customers v-bind:initial-filter="{{ json_encode($filter)}}"></customers>
     </div>
 
     {{-- Modalok --}}

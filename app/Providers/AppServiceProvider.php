@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\AddressService;
 use App\Services\AlertsService;
 use App\Services\CustomersService;
 use Illuminate\Support\Carbon;
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind('CustomersService', CustomersService::class);
         $this->app->bind('AlertsService', AlertsService::class);
+        $this->app->bind('AddressService', AddressService::class);
     }
 
     /**
