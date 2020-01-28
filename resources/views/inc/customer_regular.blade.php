@@ -68,7 +68,7 @@
                                                 data-toggle="modal"
                                                 data-target="#completePurchaseModal"
                                                 data-purchase-id="{{ $purchase->id }}"
-                                                data-purchase-date="{{ $purchase->date->format('Y/m/d H:i') }}">
+                                                data-purchase-date="{{ $purchase->date ? $purchase->date->format('Y/m/d H:i') : '' }}">
                                             <span class="icon icon-sm">
                                                 <i class="fas fa-pen"></i>
                                             </span>
