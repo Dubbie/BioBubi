@@ -17,7 +17,7 @@ class StatisticsController extends Controller
             'sold_items' => CustomerItems::sum('quantity'),
             'sold_total' => $this->number_format_short(CustomerItems::all()->sum(function ($sale) {
                 return $sale->price * $sale->quantity;
-            })),
+            }), 0),
             'items' => Item::all()->count(),
         ];
 
