@@ -58,6 +58,9 @@ Route::group(['middleware' => 'auth'], function() {
     // Statisztika
     Route::get('/statisztika', 'StatisticsController@index');
 
+    // DEMO
+    Route::get('/demo/megrendelok', 'DemoController@generateCustomers');
+
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
